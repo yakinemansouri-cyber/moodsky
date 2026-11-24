@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MoodSky — a tiny emotional weather station game. Paint the sky, earn XP, unlock secret skies." />
+  <title>MoodSky · How's your inner weather?</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-mood="calm">
+  <!-- The living sky (decorative) -->
+  <div class="sky" aria-hidden="true">
+    <div class="aurora aurora--one"></div>
+    <div class="aurora aurora--two"></div>
+    <div class="nebula-field">
+      <span class="nebula-blob nebula-blob--one"></span>
+      <span class="nebula-blob nebula-blob--two"></span>
+      <span class="nebula-blob nebula-blob--three"></span>
+    </div>
+    <div class="sun"></div>
+    <div class="moon"></div>
+    <div class="cloud cloud--one"></div>
+    <div class="cloud cloud--two"></div>
+    <div class="cloud cloud--three"></div>
+    <div class="lightning"></div>
+    <div id="particles" class="particles"></div>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand__mark">✦</span> MoodSky</div>
+      <div class="controls">
+        <button id="soundToggle" class="icon-btn" type="button" aria-label="Turn sound off" title="Sound">🔊</button>
+        <select id="lang" class="lang-select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div class="clock">
+          <strong id="clock">--:--:--</strong>
+          <span id="today"></span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow" data-i18n="eyebrow">EMOTIONAL WEATHER STATION</p>
+        <h1 id="greeting">Hello, traveler.</h1>
+        <p class="lede" data-i18n="lede">Pick the weather inside you. The sky will answer.</p>
+
+        <div id="moodPicker" class="mood-picker" role="group" aria-label="Choose your mood"></div>
+        <div id="secretPicker" class="mood-picker mood-picker--secret" role="group" aria-label="Secret skies" hidden></div>
+        <button id="surprise" class="surprise" type="button">🎲 <span data-i18n="surprise">Surprise me</span></button>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <div>
+            <p class="panel__kicker" data-i18n="forecastKicker">TODAY'S FORECAST</p>
+            <h2 id="forecast">Clear skies and quiet stars</h2>
+          </div>
+          <span id="badge" class="badge">Calm · 4/5</span>
+        </div>
+        <blockquote id="message" aria-live="polite">Loading your forecast…</blockquote>
+        <div class="panel__actions">
+          <button id="newMessage" class="btn" type="button">↻ <span data-i18n="another">Another message</span></button>
+          <span class="hint" data-i18n="hint">Tip: press 1–8 on your keyboard</span>
+        </div>
+      </section>
+
+      <section class="panel panel--game">
+        <div class="panel__head">
+          <div>
+            <p class="panel__kicker" data-i18n="gameKicker">YOUR JOURNEY</p>
+            <h2 data-i18n="gameTitle">Sky Explorer</h2>
+          </div>
+          <span id="levelBadge" class="badge badge--level">LVL 1</span>
+        </div>
+
+        <div class="xp-wrap">
+          <div class="xp-meta"><span data-i18n="xpLabel">EXPERIENCE</span><span id="xpText">0 / 80 XP</span></div>
+          <div class="xp-track"><div id="xpFill" class="xp-fill"></div></div>
+        </div>
+
+        <div id="quests" class="quests"></div>
+
+        <div class="secret-head">
+          <p class="panel__kicker" data-i18n="secretKicker">SECRET SKIES</p>
+          <span id="secretCount" class="secret-count">0 / 3</span>
+        </div>
+        <div id="secretGrid" class="secret-grid"></div>
+      </section>
+
+      <section class="panel panel--chart">
+        <div class="panel__head">
+          <div>
+            <p class="panel__kicker" data-i18n="diaryKicker">YOUR LAST 7 DAYS</p>
+            <h2 data-i18n="diaryTitle">Mood diary</h2>
+          </div>
+          <div class="stats">
+            <span id="streak">0 day streak</span>
+            <span id="total">0 entries</span>
+          </div>
+        </div>
+        <div id="chart" class="chart" aria-label="Mood chart for the last seven days"></div>
+        <button id="reset" class="link-btn" type="button" data-i18n="clearDiary">Clear my diary</button>
+      </section>
+    </main>
+
+    <footer data-i18n="footer">Your moods stay in this browser. No cloud, no judgment. ☁️</footer>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
