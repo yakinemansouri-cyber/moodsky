@@ -216,7 +216,7 @@ const MOODS = {
     }
   },
   electric: {
-    emoji: "🌌", score: 5, sound: "excited",
+    emoji: "🌌", score: 5, sound: "electric",
     gradient: "linear-gradient(180deg, #4cc9f0, #f72585)",
     messages: {
       en: ["That buzz in your chest? That's your future self waving.", "The sky is doing tricks for you today. Make a wish anyway.", "Go do the thing. The thing is waiting for you."],
@@ -414,7 +414,7 @@ const Sound = (() => {
     rainy: () => { hiss(1.8, 900, 0.2); tone(220, 0.7, "sine", 0.08); },
     stormy: () => { hiss(2.2, 500, 0.24); tone(70, 1.3, "sawtooth", 0.1); setTimeout(() => tone(90, 0.9, "sine", 0.11), 420); },
     calm: () => [440, 554, 659].forEach((f, i) => tone(f, 1.3, "sine", 0.11, i * 0.18)),
-    excited: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.08)),
+    electric: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.08)),
     meteor: () => { hiss(0.5, 3000, 0.12); tone(880, 0.6, "sine", 0.12, 0.12, 1760); },
     nebula: () => [220, 277, 330, 440].forEach((f, i) => tone(f, 1.9, "sine", 0.1, i * 0.06)),
     golden: () => [349, 440, 523].forEach((f, i) => tone(f, 1, "sine", 0.12, i * 0.12)),
@@ -461,8 +461,9 @@ function tickClock() {
 function renderParticles(moodId) {
   el.particles.replaceChildren();
   const wantRain = moodId === "rainy" || moodId === "stormy";
-  const wantStars = moodId === "calm" || moodId === "excited" || moodId === "meteor";
+  const wantStars = moodId === "calm" || moodId === "electric" || moodId === "meteor";
   const wantMeteors = moodId === "meteor";
+  const wantBolts = moodId === "electric";
   const wantSparks = moodId === "golden";
   const count = moodId === "stormy" ? 80 : 55;
   const fragment = document.createDocumentFragment();
@@ -503,6 +504,18 @@ function renderParticles(moodId) {
       m.style.animationDuration = `${2.5 + Math.random() * 2}s`;
       m.style.animationDelay = `${-Math.random() * 5}s`;
       fragment.appendChild(m);
+    }
+  }
+
+  if (wantBolts) {
+    for (let i = 0; i < 4; i++) {
+      const bolt = document.createElement("span");
+      bolt.className = "bolt";
+      bolt.style.left = `${8 + Math.random() * 84}%`;
+      bolt.style.top = `${-5 + Math.random() * 25}%`;
+      bolt.style.animationDuration = `${2.6 + Math.random() * 1.8}s`;
+      bolt.style.animationDelay = `${-Math.random() * 4}s`;
+      fragment.appendChild(bolt);
     }
   }
   el.particles.appendChild(fragment);

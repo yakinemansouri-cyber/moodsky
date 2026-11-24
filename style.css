@@ -15,7 +15,7 @@ body[data-mood="sunny"]   { --sky-top: #ff6b6b; --sky-bottom: #ffb56b; --accent:
 body[data-mood="rainy"]   { --sky-top: #3a6073; --sky-bottom: #16222a; --accent: #74c0fc; --accent-2: #a5d8ff; }
 body[data-mood="stormy"]  { --sky-top: #2b2b3c; --sky-bottom: #12131c; --accent: #b197fc; --accent-2: #f06595; }
 body[data-mood="calm"]    { --sky-top: #0f2027; --sky-bottom: #2c5364; --accent: #a5d8ff; --accent-2: #c9e4ff; }
-body[data-mood="excited"] { --sky-top: #120a2e; --sky-bottom: #3a1c71; --accent: #4cc9f0; --accent-2: #f72585; }
+body[data-mood="electric"] { --sky-top: #05030f; --sky-bottom: #1b0b3a; --accent: #22d3ee; --accent-2: #f0abfc; --card: rgba(6, 6, 26, 0.5); }
 body[data-mood="meteor"]  { --sky-top: #0b0f2b; --sky-bottom: #1b2a5b; --accent: #a5d8ff; --accent-2: #f783ac; }
 body[data-mood="nebula"]  { --sky-top: #1a0b2e; --sky-bottom: #4a154b; --accent: #e599f7; --accent-2: #4cc9f0; }
 body[data-mood="golden"]  { --sky-top: #ff7b54; --sky-bottom: #ffd56b; --accent: #fff3b0; --accent-2: #ff922b; --card: rgba(92, 32, 20, 0.3); }
@@ -69,7 +69,7 @@ body[data-mood="sunny"] .sun, body[data-mood="golden"] .sun { opacity: 1; }
   opacity: 0;
 }
 body[data-mood="calm"] .moon, body[data-mood="meteor"] .moon { opacity: .85; }
-body[data-mood="excited"] .moon, body[data-mood="nebula"] .moon { opacity: .55; }
+body[data-mood="nebula"] .moon { opacity: .55; }
 
 .cloud {
   width: 230px; height: 70px; border-radius: 100px;
@@ -107,10 +107,50 @@ body[data-mood="stormy"] .lightning { animation: flash 7s infinite; }
   background: radial-gradient(ellipse, rgba(247, 37, 133, .45), transparent 70%);
   animation: sway 9s ease-in-out infinite alternate-reverse;
 }
-body[data-mood="excited"] .aurora { opacity: 1; }
 @keyframes sway {
   from { transform: translate(-4%, -3%) rotate(-6deg) scale(1); }
   to { transform: translate(6%, 5%) rotate(6deg) scale(1.12); }
+}
+
+/* Electric: neon grid + lightning over a midnight-violet sky */
+.electric-grid {
+  position: absolute; left: -60%; right: -60%; bottom: -14%; height: 58%;
+  opacity: 0; pointer-events: none;
+  transform: perspective(420px) rotateX(66deg);
+  transform-origin: bottom center;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, .38) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 171, 252, .3) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
+  mask-image: linear-gradient(to bottom, transparent, #000 55%);
+  animation: grid-run 3.5s linear infinite;
+  transition: opacity .6s ease;
+}
+body[data-mood="electric"] .electric-grid { opacity: .75; }
+@keyframes grid-run { to { background-position: 0 46px, 0 0; } }
+
+.electric-flash {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle at 70% 20%, rgba(34, 211, 238, .35), transparent 55%);
+  animation: neon-pulse 4.5s ease-in-out infinite;
+}
+body[data-mood="electric"] .electric-flash { opacity: 1; }
+@keyframes neon-pulse { 0%, 100% { opacity: .15; } 47% { opacity: .6; } 52% { opacity: .1; } 56% { opacity: .5; } }
+
+.bolt {
+  position: absolute; width: 90px; height: 240px;
+  background: linear-gradient(180deg, #ffffff, #22d3ee 45%, #f0abfc);
+  clip-path: polygon(48% 0, 68% 0, 42% 38%, 60% 38%, 22% 100%, 46% 52%, 28% 52%);
+  filter: drop-shadow(0 0 14px #22d3ee);
+  animation: bolt-flash 3.2s infinite;
+}
+@keyframes bolt-flash {
+  0%, 68%, 100% { opacity: 0; transform: scaleY(.7) rotate(-8deg); }
+  70% { opacity: 1; transform: scaleY(1) rotate(-8deg); }
+  74% { opacity: .15; }
+  78% { opacity: 1; }
+  84% { opacity: 0; }
 }
 
 .nebula-field { inset: 0; opacity: 0; pointer-events: none; }
