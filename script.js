@@ -4,20 +4,20 @@
 
 const STRINGS = {
   en: {
-    eyebrow: "A LITTLE WEATHER JOURNAL",
-    lede: "Tell me what the weather is like in there. I'll draw it.",
+    eyebrow: "EMOTIONAL WEATHER STATION",
+    lede: "Pick the weather inside you. The sky will answer.",
     surprise: "Surprise me",
-    forecastKicker: "FORECAST, MORE OR LESS",
+    forecastKicker: "TODAY'S FORECAST",
     another: "Another message",
     hint: "Tip: press 1–8 on your keyboard",
-    gameKicker: "A SMALL GAME",
-    gameTitle: "Field notes",
-    xpLabel: "INK MARKS",
-    secretKicker: "HIDDEN PAGES",
-    diaryKicker: "THE PAST WEEK",
+    gameKicker: "YOUR JOURNEY",
+    gameTitle: "Sky Explorer",
+    xpLabel: "EXPERIENCE",
+    secretKicker: "SECRET SKIES",
+    diaryKicker: "YOUR LAST 7 DAYS",
     diaryTitle: "Mood diary",
     clearDiary: "Clear my diary",
-    footer: "Kept in this browser. No account, no cloud, no fuss.",
+    footer: "Your moods stay in this browser. No cloud, no judgment. ☁️",
     confirmClear: "Clear your whole mood diary? This can't be undone.",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
@@ -61,20 +61,20 @@ const STRINGS = {
     "toast.cleared": "Diary cleared"
   },
   fr: {
-    eyebrow: "UN PETIT JOURNAL MÉTÉO",
-    lede: "Dis-moi quel temps il fait là-dedans. Je le dessinerai.",
+    eyebrow: "STATION MÉTÉO ÉMOTIONNELLE",
+    lede: "Choisis le climat qui est en toi. Le ciel te répondra.",
     surprise: "Surprends-moi",
-    forecastKicker: "PRÉVISION, PLUS OU MOINS",
+    forecastKicker: "PRÉVISION DU JOUR",
     another: "Un autre message",
     hint: "Astuce : appuie sur 1–8 au clavier",
-    gameKicker: "UN PETIT JEU",
-    gameTitle: "Notes de terrain",
-    xpLabel: "MARQUES D'ENCRE",
-    secretKicker: "PAGES CACHÉES",
-    diaryKicker: "LA SEMAINE PASSÉE",
+    gameKicker: "TON VOYAGE",
+    gameTitle: "Explorateur du ciel",
+    xpLabel: "EXPÉRIENCE",
+    secretKicker: "CIELS SECRETS",
+    diaryKicker: "TES 7 DERNIERS JOURS",
     diaryTitle: "Journal d'humeur",
     clearDiary: "Effacer mon journal",
-    footer: "Gardé dans ce navigateur. Pas de compte, pas de cloud, pas d'histoire.",
+    footer: "Tes humeurs restent dans ce navigateur. Pas de cloud, pas de jugement. ☁️",
     confirmClear: "Effacer tout ton journal ? Cette action est irréversible.",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
@@ -118,20 +118,20 @@ const STRINGS = {
     "toast.cleared": "Journal effacé"
   },
   ar: {
-    eyebrow: "مفكرة طقس صغيرة",
-    lede: "قل لي ما الطقس في داخلك. سأرسمه لك.",
+    eyebrow: "محطة الطقس العاطفي",
+    lede: "اختر الطقس الذي بداخلك. السماء ستجيب.",
     surprise: "فاجئني",
-    forecastKicker: "توقع تقريبي",
+    forecastKicker: "توقعات اليوم",
     another: "رسالة أخرى",
     hint: "نصيحة: اضغط 1–8 من لوحة المفاتيح",
-    gameKicker: "لعبة صغيرة",
-    gameTitle: "ملاحظات ميدانية",
-    xpLabel: "علامات حبر",
-    secretKicker: "صفحات مخفية",
-    diaryKicker: "الأسبوع الماضي",
+    gameKicker: "رحلتك",
+    gameTitle: "مستكشف السماء",
+    xpLabel: "الخبرة",
+    secretKicker: "سماء سرية",
+    diaryKicker: "آخر 7 أيام",
     diaryTitle: "مفكرة المزاج",
     clearDiary: "مسح مفكرتي",
-    footer: "محفوظ في هذا المتصفح. بلا حساب، بلا سحابة، بلا تعقيد.",
+    footer: "تبقى حالاتك في هذا المتصفح. بلا سحابة، بلا أحكام. ☁️",
     confirmClear: "هل تريد مسح مفكرة المزاج بالكامل؟ لا يمكن التراجع.",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
@@ -181,7 +181,7 @@ const STRINGS = {
 const MOODS = {
   sunny: {
     emoji: "☀️", score: 5, sound: "sunny",
-    gradient: "#a85036",
+    gradient: "linear-gradient(180deg, #ffd166, #ff8fab)",
     messages: {
       en: ["Today the universe left a little sunshine in your pocket. Go spend it.", "Good things are quietly lining up for you. Walk into them.", "Your smile is contagious — please keep spreading it irresponsibly."],
       fr: ["Aujourd'hui, l'univers a laissé un peu de soleil dans ta poche. Dépense-le.", "Les bonnes choses s'alignent doucement pour toi. Avance vers elles.", "Ton sourire est contagieux. Continue de le répandre sans retenue."],
@@ -190,7 +190,7 @@ const MOODS = {
   },
   rainy: {
     emoji: "🌧️", score: 2, sound: "rainy",
-    gradient: "#3c6d82",
+    gradient: "linear-gradient(180deg, #74c0fc, #3a6073)",
     messages: {
       en: ["Rain is just the sky taking a deep breath. You can too.", "Slow down. Even clouds get to rest before they clear.", "Name one small thing you can feel right now. That's enough."],
       fr: ["La pluie, c'est juste le ciel qui respire. Toi aussi, tu peux.", "Ralentis. Même les nuages se reposent avant de se dissiper.", "Nomme une petite chose que tu ressens maintenant. Ça suffit."],
@@ -199,7 +199,7 @@ const MOODS = {
   },
   stormy: {
     emoji: "⛈️", score: 1, sound: "stormy",
-    gradient: "#5b4f76",
+    gradient: "linear-gradient(180deg, #b197fc, #f06595)",
     messages: {
       en: ["Storms don't last. You are bigger than the weather passing through you.", "It's okay to be loud today. Even thunder has something to say.", "Breathe in for four, hold for four, out for six. Again."],
       fr: ["Les orages ne durent pas. Tu es plus grand que la tempête qui passe.", "C'est ok d'être bruyant aujourd'hui. Même le tonnerre a quelque chose à dire.", "Inspire quatre temps, retiens quatre, expire six. Encore."],
@@ -208,7 +208,7 @@ const MOODS = {
   },
   calm: {
     emoji: "✨", score: 4, sound: "calm",
-    gradient: "#3f7079",
+    gradient: "linear-gradient(180deg, #a5d8ff, #748ffc)",
     messages: {
       en: ["The stars are out and none of them are in a hurry. Neither are you.", "Quiet is a superpower. You're using it well.", "You don't have to shine to be worth looking at."],
       fr: ["Les étoiles sont là et aucune n'est pressée. Toi non plus.", "Le calme est un super-pouvoir. Tu l'utilises bien.", "Tu n'as pas besoin de briller pour être précieux."],
@@ -217,7 +217,7 @@ const MOODS = {
   },
   electric: {
     emoji: "🌌", score: 5, sound: "electric",
-    gradient: "#355f84",
+    gradient: "linear-gradient(180deg, #4cc9f0, #f72585)",
     messages: {
       en: ["That buzz in your chest? That's your future self waving.", "The sky is doing tricks for you today. Make a wish anyway.", "Go do the thing. The thing is waiting for you."],
       fr: ["Ce bourdonnement dans ta poitrine ? C'est ton futur toi qui salue.", "Le ciel fait des tours pour toi aujourd'hui. Fais un vœu quand même.", "Va faire cette chose. Elle t'attend."],
@@ -226,7 +226,7 @@ const MOODS = {
   },
   meteor: {
     emoji: "🌠", score: 5, sound: "meteor", secret: true,
-    gradient: "#4c5784",
+    gradient: "linear-gradient(180deg, #a5d8ff, #f783ac)",
     messages: {
       en: ["Make a wish — that streak just crossed the whole sky for you.", "Even the fastest things in the universe leave a trail. So will you.", "Look up. Something brilliant is passing by."],
       fr: ["Fais un vœu : cette traînée a traversé le ciel pour toi.", "Même les choses les plus rapides laissent une trace. Toi aussi.", "Lève les yeux. Quelque chose de brillant passe."],
@@ -235,7 +235,7 @@ const MOODS = {
   },
   nebula: {
     emoji: "🪐", score: 4, sound: "nebula", secret: true,
-    gradient: "#7a547f",
+    gradient: "linear-gradient(180deg, #e599f7, #4cc9f0)",
     messages: {
       en: ["You are stardust learning what it means to be a galaxy.", "Everything beautiful started as a cloud of chaos.", "Drift a while. The universe is making something new."],
       fr: ["Tu es de la poussière d'étoiles qui apprend à être une galaxie.", "Tout ce qui est beau a commencé par un nuage de chaos.", "Dérive un peu. L'univers crée quelque chose de nouveau."],
@@ -244,7 +244,7 @@ const MOODS = {
   },
   golden: {
     emoji: "🌅", score: 5, sound: "golden", secret: true,
-    gradient: "#9b6b32",
+    gradient: "linear-gradient(180deg, #fff3b0, #ff922b)",
     messages: {
       en: ["The light is soft now. So can you be.", "Every ending has a warm side. Turn toward it.", "Golden hours don't ask permission. Neither should you."],
       fr: ["La lumière est douce maintenant. Toi aussi, tu peux l'être.", "Chaque fin a un côté chaud. Tourne-toi vers lui.", "L'heure dorée ne demande pas la permission. Toi non plus."],
