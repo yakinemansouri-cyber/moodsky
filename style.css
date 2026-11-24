@@ -207,20 +207,23 @@ body[data-mood="electric"] .electric-flash { opacity: 1; }
   transform: rotate(-1.5deg); opacity: .8;
 }
 .controls { display: flex; align-items: center; gap: 8px; }
+.audio-controls { display: flex; align-items: center; gap: 6px; }
 
-button, select { font-family: inherit; color: inherit; }
-.lang-select {
-  height: 30px; padding: 0 6px;
-  border: 1.5px solid var(--line); border-radius: 2px 5px 3px 4px;
-  background: rgba(255, 255, 255, .38); font-family: var(--mono); font-size: .72rem;
-  cursor: pointer; box-shadow: 1px 2px 0 rgba(40, 36, 31, .14);
+button, select, input { font-family: inherit; color: inherit; }
+.icon-btn, .lang-select {
+  height: 30px; border: 1.5px solid var(--line); border-radius: 2px 5px 3px 4px;
+  background: rgba(255, 255, 255, .38); font-size: .82rem; cursor: pointer;
+  box-shadow: 1px 2px 0 rgba(40, 36, 31, .14);
 }
+.icon-btn { width: 32px; display: grid; place-items: center; }
+.lang-select { padding: 0 6px; font-family: var(--mono); font-size: .72rem; }
 .lang-select option { color: #28241f; }
-.lang-select:hover { background: rgba(255, 255, 255, .7); }
-.lang-select:focus-visible, .surprise:focus-visible,
+.icon-btn:hover, .lang-select:hover { background: rgba(255, 255, 255, .7); }
+.icon-btn:focus-visible, .lang-select:focus-visible, .surprise:focus-visible,
 .btn:focus-visible, .link-btn:focus-visible, .mood:focus-visible, .secret-card:focus-visible {
   outline: 2px dashed var(--accent); outline-offset: 3px;
 }
+.volume { width: 62px; accent-color: var(--accent); cursor: pointer; }
 .clock { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; padding-inline-start: 8px; }
 .clock strong { font-family: var(--mono); font-size: .9rem; font-weight: 700; }
 .clock span { font-size: .72rem; color: var(--muted); font-style: italic; }
@@ -415,6 +418,7 @@ footer {
   .app { width: calc(100% - 18px); margin: 12px auto 20px; padding: 24px 18px 22px; }
   .topbar { margin-bottom: 26px; flex-wrap: wrap; }
   .clock span { display: none; }
+  .volume { width: 46px; }
   .mood-picker { grid-template-columns: repeat(2, 1fr); }
   .mood-picker .mood:last-child { grid-column: span 2; }
   .mood-picker--secret { grid-template-columns: repeat(3, 1fr); }

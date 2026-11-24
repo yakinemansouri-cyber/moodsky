@@ -1,4 +1,4 @@
-/* MoodSky — moods, XP game, secret skies and 3 languages. No libraries. */
+/* MoodSky v2 — moods, sound, XP game, secret skies and 4 languages. No libraries. */
 
 /* ---------- Translations ---------- */
 
@@ -19,6 +19,12 @@ const STRINGS = {
     clearDiary: "Clear my diary",
     footer: "Kept in this browser. No account, no cloud, no fuss.",
     confirmClear: "Clear your whole mood diary? This can't be undone.",
+    soundOffLabel: "Turn sound off",
+    soundOnLabel: "Turn sound on",
+    testSound: "Test sound",
+    volume: "Volume",
+    "toast.soundTest": "🔊 Sound check!",
+    "toast.soundOff": "Sound is off — tap 🔊 to turn it on",
     langLabel: "Language",
     moodLabel: "Choose your mood",
     secretLabel: "Secret skies",
@@ -70,6 +76,12 @@ const STRINGS = {
     clearDiary: "Effacer mon journal",
     footer: "Gardé dans ce navigateur. Pas de compte, pas de cloud, pas d'histoire.",
     confirmClear: "Effacer tout ton journal ? Cette action est irréversible.",
+    soundOffLabel: "Couper le son",
+    soundOnLabel: "Activer le son",
+    testSound: "Tester le son",
+    volume: "Volume",
+    "toast.soundTest": "🔊 Test du son !",
+    "toast.soundOff": "Son coupé — appuie sur 🔊 pour l'activer",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
     secretLabel: "Ciels secrets",
@@ -121,6 +133,12 @@ const STRINGS = {
     clearDiary: "مسح مفكرتي",
     footer: "محفوظ في هذا المتصفح. بلا حساب، بلا سحابة، بلا تعقيد.",
     confirmClear: "هل تريد مسح مفكرة المزاج بالكامل؟ لا يمكن التراجع.",
+    soundOffLabel: "إيقاف الصوت",
+    soundOnLabel: "تشغيل الصوت",
+    testSound: "اختبار الصوت",
+    volume: "مستوى الصوت",
+    "toast.soundTest": "🔊 فحص الصوت!",
+    "toast.soundOff": "الصوت مغلق — اضغط 🔊 لتشغيله",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
     secretLabel: "سماء سرية",
@@ -162,7 +180,7 @@ const STRINGS = {
 
 const MOODS = {
   sunny: {
-    emoji: "☀️", score: 5,
+    emoji: "☀️", score: 5, sound: "sunny",
     gradient: "#a85036",
     messages: {
       en: ["Today the universe left a little sunshine in your pocket. Go spend it.", "Good things are quietly lining up for you. Walk into them.", "Your smile is contagious — please keep spreading it irresponsibly."],
@@ -171,7 +189,7 @@ const MOODS = {
     }
   },
   rainy: {
-    emoji: "🌧️", score: 2,
+    emoji: "🌧️", score: 2, sound: "rainy",
     gradient: "#3c6d82",
     messages: {
       en: ["Rain is just the sky taking a deep breath. You can too.", "Slow down. Even clouds get to rest before they clear.", "Name one small thing you can feel right now. That's enough."],
@@ -180,7 +198,7 @@ const MOODS = {
     }
   },
   stormy: {
-    emoji: "⛈️", score: 1,
+    emoji: "⛈️", score: 1, sound: "stormy",
     gradient: "#5b4f76",
     messages: {
       en: ["Storms don't last. You are bigger than the weather passing through you.", "It's okay to be loud today. Even thunder has something to say.", "Breathe in for four, hold for four, out for six. Again."],
@@ -189,7 +207,7 @@ const MOODS = {
     }
   },
   calm: {
-    emoji: "✨", score: 4,
+    emoji: "✨", score: 4, sound: "calm",
     gradient: "#3f7079",
     messages: {
       en: ["The stars are out and none of them are in a hurry. Neither are you.", "Quiet is a superpower. You're using it well.", "You don't have to shine to be worth looking at."],
@@ -198,7 +216,7 @@ const MOODS = {
     }
   },
   electric: {
-    emoji: "🌌", score: 5,
+    emoji: "🌌", score: 5, sound: "electric",
     gradient: "#355f84",
     messages: {
       en: ["That buzz in your chest? That's your future self waving.", "The sky is doing tricks for you today. Make a wish anyway.", "Go do the thing. The thing is waiting for you."],
@@ -207,7 +225,7 @@ const MOODS = {
     }
   },
   meteor: {
-    emoji: "🌠", score: 5, secret: true,
+    emoji: "🌠", score: 5, sound: "meteor", secret: true,
     gradient: "#4c5784",
     messages: {
       en: ["Make a wish — that streak just crossed the whole sky for you.", "Even the fastest things in the universe leave a trail. So will you.", "Look up. Something brilliant is passing by."],
@@ -216,7 +234,7 @@ const MOODS = {
     }
   },
   nebula: {
-    emoji: "🪐", score: 4, secret: true,
+    emoji: "🪐", score: 4, sound: "nebula", secret: true,
     gradient: "#7a547f",
     messages: {
       en: ["You are stardust learning what it means to be a galaxy.", "Everything beautiful started as a cloud of chaos.", "Drift a while. The universe is making something new."],
@@ -225,7 +243,7 @@ const MOODS = {
     }
   },
   golden: {
-    emoji: "🌅", score: 5, secret: true,
+    emoji: "🌅", score: 5, sound: "golden", secret: true,
     gradient: "#9b6b32",
     messages: {
       en: ["The light is soft now. So can you be.", "Every ending has a warm side. Turn toward it.", "Golden hours don't ask permission. Neither should you."],
@@ -248,7 +266,7 @@ const LANGS = ["en", "fr", "ar"];
 function defaults() {
   return {
     diary: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
-    unlocked: [], lang: "en", lastMood: "calm", lastMessageIndex: {}
+    unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {}
   };
 }
 
@@ -310,12 +328,109 @@ const el = {
   xpText: document.getElementById("xpText"),
   xpFill: document.getElementById("xpFill"),
   secretCount: document.getElementById("secretCount"),
+  soundToggle: document.getElementById("soundToggle"),
+  soundTest: document.getElementById("soundTest"),
+  volume: document.getElementById("volume"),
   lang: document.getElementById("lang"),
   surprise: document.getElementById("surprise"),
   newMessage: document.getElementById("newMessage"),
   reset: document.getElementById("reset"),
   toasts: document.getElementById("toasts")
 };
+
+/* ---------- Sound (Web Audio, no files) ---------- */
+
+const Sound = (() => {
+  let ctx = null;
+  let master = null;
+  let noiseBuffer = null;
+
+  function volumeValue() {
+    return Math.max(0, Math.min(1, Number(state.volume ?? 80) / 100));
+  }
+
+  function ac() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    if (!ctx) ctx = new AC();
+    if (!master) {
+      master = ctx.createGain();
+      master.connect(ctx.destination);
+    }
+    master.gain.value = volumeValue();
+    if (ctx.state === "suspended") ctx.resume();
+    return ctx;
+  }
+
+  // Browsers require a gesture before audio can start. Call this on first click/key.
+  function unlock() { ac(); }
+
+  function setVolume() {
+    if (master) master.gain.value = volumeValue();
+  }
+
+  function tone(freq, dur = 0.25, type = "sine", vol = 0.12, delay = 0, endFreq) {
+    const audio = ac(); if (!audio) return;
+    const at = audio.currentTime + delay;
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, at);
+    if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, at + dur);
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(vol, at + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    osc.connect(gain).connect(master);
+    osc.start(at);
+    osc.stop(at + dur + 0.05);
+  }
+
+  function hiss(dur = 1, cutoff = 1000, vol = 0.16, delay = 0) {
+    const audio = ac(); if (!audio) return;
+    if (!noiseBuffer) {
+      noiseBuffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    }
+    const src = audio.createBufferSource();
+    src.buffer = noiseBuffer;
+    src.loop = true;
+    const filter = audio.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = cutoff;
+    const gain = audio.createGain();
+    const at = audio.currentTime + delay;
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.linearRampToValueAtTime(vol, at + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    src.connect(filter).connect(gain).connect(master);
+    src.start(at);
+    src.stop(at + dur + 0.05);
+  }
+
+  const presets = {
+    click: () => tone(660, 0.12, "sine", 0.14),
+    sunny: () => [523, 659, 784].forEach((f, i) => tone(f, 0.55, "sine", 0.16, i * 0.1)),
+    rainy: () => { hiss(1.8, 900, 0.2); tone(220, 0.7, "sine", 0.08); },
+    stormy: () => { hiss(2.2, 500, 0.24); tone(70, 1.3, "sawtooth", 0.1); setTimeout(() => tone(90, 0.9, "sine", 0.11), 420); },
+    calm: () => [440, 554, 659].forEach((f, i) => tone(f, 1.3, "sine", 0.11, i * 0.18)),
+    electric: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.08)),
+    meteor: () => { hiss(0.5, 3000, 0.12); tone(880, 0.6, "sine", 0.12, 0.12, 1760); },
+    nebula: () => [220, 277, 330, 440].forEach((f, i) => tone(f, 1.9, "sine", 0.1, i * 0.06)),
+    golden: () => [349, 440, 523].forEach((f, i) => tone(f, 1, "sine", 0.12, i * 0.12)),
+    unlock: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.1)),
+    levelup: () => [440, 554, 659, 880].forEach((f, i) => tone(f, 0.45, "sine", 0.13, i * 0.11)),
+    quest: () => [659, 784, 988].forEach((f, i) => tone(f, 0.35, "triangle", 0.12, i * 0.09)),
+    test: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.6, "triangle", 0.2, i * 0.16))
+  };
+
+  return {
+    play(name) { if (!state.sound) return; try { presets[name]?.(); } catch { /* audio blocked */ } },
+    test() { try { presets.test(); } catch { /* audio blocked */ } },
+    unlock,
+    setVolume
+  };
+})();
 
 /* ---------- Toasts ---------- */
 
@@ -531,6 +646,7 @@ function checkLevels() {
   while (levelOf(state.xp) > state.lastLevel) {
     state.lastLevel++;
     toast(fmt("toast.level", { n: state.lastLevel }));
+    Sound.play("levelup");
   }
 }
 
@@ -539,6 +655,7 @@ function checkUnlocks() {
     if (levelOf(state.xp) >= s.level && !state.unlocked.includes(s.id)) {
       state.unlocked.push(s.id);
       toast(fmt("toast.unlock", { name: t("mood." + s.id) }));
+      Sound.play("unlock");
     }
   });
 }
@@ -551,6 +668,7 @@ function syncProgress() {
       state.achievements.push(q.id);
       state.xp += q.xp;
       toast(fmt("toast.quest", { name: t("quest." + q.id + ".title"), xp: q.xp }));
+      Sound.play("quest");
     }
   });
   checkLevels();
@@ -614,6 +732,8 @@ function selectMood(moodId, options = {}) {
   showMessage(moodId);
 
   if (!options.silent) {
+    Sound.play("click");
+    Sound.play(MOODS[moodId].sound);
     awardXP(firstToday ? 10 : 3);
   }
 }
@@ -627,6 +747,11 @@ function applyLanguage() {
   document.querySelectorAll("[data-i18n]").forEach(node => {
     node.textContent = t(node.dataset.i18n);
   });
+  el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
+  el.soundTest.setAttribute("aria-label", t("testSound"));
+  el.soundTest.title = t("testSound");
+  el.volume.setAttribute("aria-label", t("volume"));
+  el.volume.title = t("volume");
   tickClock();
   renderMoodButtons();
   renderQuests();
@@ -636,6 +761,36 @@ function applyLanguage() {
 }
 
 /* ---------- Events ---------- */
+
+el.soundToggle.addEventListener("click", () => {
+  state.sound = !state.sound;
+  el.soundToggle.textContent = state.sound ? "🔊" : "🔇";
+  el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
+  persist();
+  Sound.play("click");
+});
+
+el.soundTest.addEventListener("click", () => {
+  if (!state.sound) {
+    state.sound = true;
+    el.soundToggle.textContent = "🔊";
+    el.soundToggle.setAttribute("aria-label", t("soundOffLabel"));
+    persist();
+  }
+  Sound.unlock();
+  Sound.test();
+  toast(t("toast.soundTest"));
+});
+
+el.volume.addEventListener("input", () => {
+  state.volume = Number(el.volume.value);
+  persist();
+  Sound.setVolume();
+});
+
+// Unlock audio on the very first gesture so later mood clicks are never blocked.
+window.addEventListener("pointerdown", () => Sound.unlock(), { once: true });
+window.addEventListener("keydown", () => Sound.unlock(), { once: true });
 
 el.lang.addEventListener("change", () => {
   state.lang = el.lang.value;
@@ -650,6 +805,7 @@ el.surprise.addEventListener("click", () => {
 });
 
 el.newMessage.addEventListener("click", () => {
+  Sound.play("click");
   showMessage(currentMood, true);
 });
 
@@ -683,6 +839,8 @@ document.addEventListener("keydown", event => {
 
 /* ---------- Boot ---------- */
 
+el.soundToggle.textContent = state.sound ? "🔊" : "🔇";
+el.volume.value = String(state.volume ?? 80);
 applyLanguage();
 tickClock();
 setInterval(tickClock, 1000);

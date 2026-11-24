@@ -32,6 +32,11 @@
     <header class="topbar">
       <div class="brand"><span class="brand__mark">✦</span> MoodSky</div>
       <div class="controls">
+        <div class="audio-controls">
+          <button id="soundTest" class="icon-btn" type="button" aria-label="Test sound" title="Test sound">🎵</button>
+          <button id="soundToggle" class="icon-btn" type="button" aria-label="Turn sound off" title="Sound">🔊</button>
+          <input id="volume" class="volume" type="range" min="0" max="100" value="80" aria-label="Volume" title="Volume" />
+        </div>
         <select id="lang" class="lang-select" aria-label="Language">
           <option value="en">English</option>
           <option value="fr">Français</option>
