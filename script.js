@@ -21,6 +21,10 @@ const STRINGS = {
     confirmClear: "Clear your whole mood diary? This can't be undone.",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
+    testSound: "Test sound",
+    volume: "Volume",
+    "toast.soundTest": "🔊 Sound check!",
+    "toast.soundOff": "Sound is off — tap 🔊 to turn it on",
     langLabel: "Language",
     moodLabel: "Choose your mood",
     secretLabel: "Secret skies",
@@ -74,6 +78,10 @@ const STRINGS = {
     confirmClear: "Effacer tout ton journal ? Cette action est irréversible.",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
+    testSound: "Tester le son",
+    volume: "Volume",
+    "toast.soundTest": "🔊 Test du son !",
+    "toast.soundOff": "Son coupé — appuie sur 🔊 pour l'activer",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
     secretLabel: "Ciels secrets",
@@ -127,6 +135,10 @@ const STRINGS = {
     confirmClear: "هل تريد مسح مفكرة المزاج بالكامل؟ لا يمكن التراجع.",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
+    testSound: "اختبار الصوت",
+    volume: "مستوى الصوت",
+    "toast.soundTest": "🔊 فحص الصوت!",
+    "toast.soundOff": "الصوت مغلق — اضغط 🔊 لتشغيله",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
     secretLabel: "سماء سرية",
@@ -254,7 +266,7 @@ const LANGS = ["en", "fr", "ar"];
 function defaults() {
   return {
     diary: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
-    unlocked: [], lang: "en", sound: true, lastMood: "calm", lastMessageIndex: {}
+    unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {}
   };
 }
 
@@ -317,6 +329,8 @@ const el = {
   xpFill: document.getElementById("xpFill"),
   secretCount: document.getElementById("secretCount"),
   soundToggle: document.getElementById("soundToggle"),
+  soundTest: document.getElementById("soundTest"),
+  volume: document.getElementById("volume"),
   lang: document.getElementById("lang"),
   surprise: document.getElementById("surprise"),
   newMessage: document.getElementById("newMessage"),
@@ -328,18 +342,34 @@ const el = {
 
 const Sound = (() => {
   let ctx = null;
+  let master = null;
   let noiseBuffer = null;
 
+  function volumeValue() {
+    return Math.max(0, Math.min(1, Number(state.volume ?? 80) / 100));
+  }
+
   function ac() {
-    if (!state.sound) return null;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
     if (!ctx) ctx = new AC();
+    if (!master) {
+      master = ctx.createGain();
+      master.connect(ctx.destination);
+    }
+    master.gain.value = volumeValue();
     if (ctx.state === "suspended") ctx.resume();
     return ctx;
   }
 
-  function tone(freq, dur = 0.25, type = "sine", vol = 0.06, delay = 0, endFreq) {
+  // Browsers require a gesture before audio can start. Call this on first click/key.
+  function unlock() { ac(); }
+
+  function setVolume() {
+    if (master) master.gain.value = volumeValue();
+  }
+
+  function tone(freq, dur = 0.25, type = "sine", vol = 0.12, delay = 0, endFreq) {
     const audio = ac(); if (!audio) return;
     const at = audio.currentTime + delay;
     const osc = audio.createOscillator();
@@ -348,14 +378,14 @@ const Sound = (() => {
     osc.frequency.setValueAtTime(freq, at);
     if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, at + dur);
     gain.gain.setValueAtTime(0.0001, at);
-    gain.gain.exponentialRampToValueAtTime(vol, at + 0.02);
+    gain.gain.exponentialRampToValueAtTime(vol, at + 0.025);
     gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-    osc.connect(gain).connect(audio.destination);
+    osc.connect(gain).connect(master);
     osc.start(at);
     osc.stop(at + dur + 0.05);
   }
 
-  function hiss(dur = 1, cutoff = 1000, vol = 0.08, delay = 0) {
+  function hiss(dur = 1, cutoff = 1000, vol = 0.16, delay = 0) {
     const audio = ac(); if (!audio) return;
     if (!noiseBuffer) {
       noiseBuffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
@@ -373,27 +403,33 @@ const Sound = (() => {
     gain.gain.setValueAtTime(0.0001, at);
     gain.gain.linearRampToValueAtTime(vol, at + 0.1);
     gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-    src.connect(filter).connect(gain).connect(audio.destination);
+    src.connect(filter).connect(gain).connect(master);
     src.start(at);
     src.stop(at + dur + 0.05);
   }
 
   const presets = {
-    click: () => tone(660, 0.07, "sine", 0.04),
-    sunny: () => [523, 659, 784].forEach((f, i) => tone(f, 0.5, "sine", 0.06, i * 0.09)),
-    rainy: () => { hiss(1.6, 900, 0.08); tone(220, 0.6, "sine", 0.025); },
-    stormy: () => { hiss(2, 500, 0.12); tone(70, 1.2, "sawtooth", 0.04); setTimeout(() => tone(90, 0.8, "sine", 0.05), 420); },
-    calm: () => [440, 554, 659].forEach((f, i) => tone(f, 1.2, "sine", 0.035, i * 0.18)),
-    excited: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.35, "triangle", 0.05, i * 0.07)),
-    meteor: () => { hiss(0.45, 3000, 0.05); tone(880, 0.5, "sine", 0.05, 0.12, 1760); },
-    nebula: () => [220, 277, 330, 440].forEach((f, i) => tone(f, 1.8, "sine", 0.03, i * 0.06)),
-    golden: () => [349, 440, 523].forEach((f, i) => tone(f, 0.9, "sine", 0.045, i * 0.12)),
-    unlock: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.35, "triangle", 0.06, i * 0.1)),
-    levelup: () => [440, 554, 659, 880].forEach((f, i) => tone(f, 0.4, "sine", 0.055, i * 0.11)),
-    quest: () => [659, 784, 988].forEach((f, i) => tone(f, 0.3, "triangle", 0.05, i * 0.09))
+    click: () => tone(660, 0.12, "sine", 0.14),
+    sunny: () => [523, 659, 784].forEach((f, i) => tone(f, 0.55, "sine", 0.16, i * 0.1)),
+    rainy: () => { hiss(1.8, 900, 0.2); tone(220, 0.7, "sine", 0.08); },
+    stormy: () => { hiss(2.2, 500, 0.24); tone(70, 1.3, "sawtooth", 0.1); setTimeout(() => tone(90, 0.9, "sine", 0.11), 420); },
+    calm: () => [440, 554, 659].forEach((f, i) => tone(f, 1.3, "sine", 0.11, i * 0.18)),
+    excited: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.08)),
+    meteor: () => { hiss(0.5, 3000, 0.12); tone(880, 0.6, "sine", 0.12, 0.12, 1760); },
+    nebula: () => [220, 277, 330, 440].forEach((f, i) => tone(f, 1.9, "sine", 0.1, i * 0.06)),
+    golden: () => [349, 440, 523].forEach((f, i) => tone(f, 1, "sine", 0.12, i * 0.12)),
+    unlock: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.1)),
+    levelup: () => [440, 554, 659, 880].forEach((f, i) => tone(f, 0.45, "sine", 0.13, i * 0.11)),
+    quest: () => [659, 784, 988].forEach((f, i) => tone(f, 0.35, "triangle", 0.12, i * 0.09)),
+    test: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.6, "triangle", 0.2, i * 0.16))
   };
 
-  return { play(name) { if (!state.sound) return; try { presets[name]?.(); } catch { /* audio blocked */ } } };
+  return {
+    play(name) { if (!state.sound) return; try { presets[name]?.(); } catch { /* audio blocked */ } },
+    test() { try { presets.test(); } catch { /* audio blocked */ } },
+    unlock,
+    setVolume
+  };
 })();
 
 /* ---------- Toasts ---------- */
@@ -699,6 +735,10 @@ function applyLanguage() {
     node.textContent = t(node.dataset.i18n);
   });
   el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
+  el.soundTest.setAttribute("aria-label", t("testSound"));
+  el.soundTest.title = t("testSound");
+  el.volume.setAttribute("aria-label", t("volume"));
+  el.volume.title = t("volume");
   tickClock();
   renderMoodButtons();
   renderQuests();
@@ -716,6 +756,28 @@ el.soundToggle.addEventListener("click", () => {
   persist();
   Sound.play("click");
 });
+
+el.soundTest.addEventListener("click", () => {
+  if (!state.sound) {
+    state.sound = true;
+    el.soundToggle.textContent = "🔊";
+    el.soundToggle.setAttribute("aria-label", t("soundOffLabel"));
+    persist();
+  }
+  Sound.unlock();
+  Sound.test();
+  toast(t("toast.soundTest"));
+});
+
+el.volume.addEventListener("input", () => {
+  state.volume = Number(el.volume.value);
+  persist();
+  Sound.setVolume();
+});
+
+// Unlock audio on the very first gesture so later mood clicks are never blocked.
+window.addEventListener("pointerdown", () => Sound.unlock(), { once: true });
+window.addEventListener("keydown", () => Sound.unlock(), { once: true });
 
 el.lang.addEventListener("change", () => {
   state.lang = el.lang.value;
@@ -765,6 +827,7 @@ document.addEventListener("keydown", event => {
 /* ---------- Boot ---------- */
 
 el.soundToggle.textContent = state.sound ? "🔊" : "🔇";
+el.volume.value = String(state.volume ?? 80);
 applyLanguage();
 tickClock();
 setInterval(tickClock, 1000);

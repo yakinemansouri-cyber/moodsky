@@ -168,6 +168,8 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
   color: #1b1030; box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
 }
 .controls { display: flex; align-items: center; gap: 10px; }
+.audio-controls { display: flex; align-items: center; gap: 6px; }
+.volume { width: 72px; accent-color: var(--accent); cursor: pointer; }
 .icon-btn, .lang-select {
   height: 36px; border: 1px solid var(--border); border-radius: 12px;
   color: var(--ink); background: var(--card); backdrop-filter: blur(14px);
@@ -344,6 +346,7 @@ footer { text-align: center; padding: 10px 0 0; font-size: .74rem; color: var(--
   .app { padding: 20px 14px 30px; }
   .topbar { margin-bottom: 32px; flex-wrap: wrap; }
   .clock span { display: none; }
+  .volume { width: 52px; }
   .mood-picker { grid-template-columns: repeat(2, 1fr); }
   .mood-picker .mood:last-child { grid-column: span 2; }
   .mood-picker--secret { grid-template-columns: repeat(3, 1fr); }
