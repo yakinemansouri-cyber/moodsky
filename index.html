@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="MoodSky — a tiny emotional weather station game. Paint the sky, earn XP, unlock secret skies." />
   <title>MoodSky · How's your inner weather?</title>
-  <link rel="stylesheet" href="style.css?v=nosong" />
+  <link rel="stylesheet" href="style.css?v=login" />
 </head>
 <body data-mood="calm">
   <!-- The living sky (decorative) -->
@@ -41,6 +41,7 @@
           <option value="fr">Français</option>
           <option value="ar">العربية</option>
         </select>
+        <button id="loginBtn" class="btn btn--small" type="button" data-i18n="login">Log in</button>
         <div class="clock">
           <strong id="clock">--:--:--</strong>
           <span id="today"></span>
@@ -118,6 +119,29 @@
 
   <div id="toasts" class="toasts" aria-live="polite"></div>
 
-  <script src="script.js?v=nosong"></script>
+  <div id="loginModal" class="modal" hidden>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <div class="modal__head">
+        <div>
+          <h2 id="loginTitle" data-i18n="loginTitle">Log in to MoodSky</h2>
+          <p class="modal__sub" data-i18n="loginSubtitle">Save your name on this device.</p>
+        </div>
+        <button id="loginClose" class="icon-btn" type="button" aria-label="Close">✕</button>
+      </div>
+      <form id="loginForm" class="modal__form">
+        <label class="field">
+          <span data-i18n="email">Email</span>
+          <input id="loginEmail" class="field__input" type="email" autocomplete="email" required />
+        </label>
+        <label class="field">
+          <span data-i18n="password">Password</span>
+          <input id="loginPassword" class="field__input" type="password" autocomplete="current-password" required />
+        </label>
+        <button class="btn" type="submit" data-i18n="loginSubmit">Log in</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=login"></script>
 </body>
 </html>

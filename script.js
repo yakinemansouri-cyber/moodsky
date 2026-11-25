@@ -23,6 +23,16 @@ const STRINGS = {
     soundOnLabel: "Turn sound on",
     volume: "Volume",
     "toast.soundOff": "Sound is off — tap 🔊 to turn it on",
+    login: "Log in",
+    logout: "Log out",
+    loginTitle: "Log in to MoodSky",
+    loginSubtitle: "Save your name on this device.",
+    email: "Email",
+    password: "Password",
+    loginSubmit: "Log in",
+    loginClose: "Close",
+    "toast.loggedIn": "Welcome back, {name}!",
+    "toast.loggedOut": "Logged out",
     langLabel: "Language",
     moodLabel: "Choose your mood",
     secretLabel: "Secret skies",
@@ -78,6 +88,16 @@ const STRINGS = {
     soundOnLabel: "Activer le son",
     volume: "Volume",
     "toast.soundOff": "Son coupé — appuie sur 🔊 pour l'activer",
+    login: "Connexion",
+    logout: "Déconnexion",
+    loginTitle: "Connexion à MoodSky",
+    loginSubtitle: "Enregistre ton nom sur cet appareil.",
+    email: "E-mail",
+    password: "Mot de passe",
+    loginSubmit: "Se connecter",
+    loginClose: "Fermer",
+    "toast.loggedIn": "Bon retour, {name} !",
+    "toast.loggedOut": "Déconnecté",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
     secretLabel: "Ciels secrets",
@@ -133,6 +153,16 @@ const STRINGS = {
     soundOnLabel: "تشغيل الصوت",
     volume: "مستوى الصوت",
     "toast.soundOff": "الصوت مغلق — اضغط 🔊 لتشغيله",
+    login: "تسجيل الدخول",
+    logout: "تسجيل الخروج",
+    loginTitle: "تسجيل الدخول إلى MoodSky",
+    loginSubtitle: "احفظ اسمك على هذا الجهاز.",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    loginSubmit: "تسجيل الدخول",
+    loginClose: "إغلاق",
+    "toast.loggedIn": "مرحباً بعودتك، {name}!",
+    "toast.loggedOut": "تم تسجيل الخروج",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
     secretLabel: "سماء سرية",
@@ -260,7 +290,8 @@ const LANGS = ["en", "fr", "ar"];
 function defaults() {
   return {
     diary: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
-    unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {}
+    unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {},
+    user: null
   };
 }
 
@@ -325,6 +356,12 @@ const el = {
   soundToggle: document.getElementById("soundToggle"),
   volume: document.getElementById("volume"),
   lang: document.getElementById("lang"),
+  loginBtn: document.getElementById("loginBtn"),
+  loginModal: document.getElementById("loginModal"),
+  loginForm: document.getElementById("loginForm"),
+  loginEmail: document.getElementById("loginEmail"),
+  loginPassword: document.getElementById("loginPassword"),
+  loginClose: document.getElementById("loginClose"),
   surprise: document.getElementById("surprise"),
   newMessage: document.getElementById("newMessage"),
   reset: document.getElementById("reset"),
@@ -444,7 +481,9 @@ function tickClock() {
   el.today.textContent = now.toLocaleDateString(state.lang, { weekday: "long", month: "short", day: "numeric" });
   const hour = now.getHours();
   const key = hour < 5 ? "greeting.night" : hour < 12 ? "greeting.morning" : hour < 18 ? "greeting.afternoon" : "greeting.evening";
-  el.greeting.textContent = t(key);
+  const base = t(key);
+  const name = userName();
+  el.greeting.textContent = name ? `${base.replace(/\.$/, "")}, ${name}.` : base;
 }
 
 /* ---------- Sky particles ---------- */
@@ -729,6 +768,60 @@ function selectMood(moodId, options = {}) {
   }
 }
 
+/* ---------- Login ---------- */
+
+function userName() {
+  if (!state.user || !state.user.email) return "";
+  const raw = String(state.user.email).split("@")[0] || "Traveler";
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+function renderAuth() {
+  const loggedIn = !!state.user;
+  el.loginBtn.textContent = loggedIn ? t("logout") : t("login");
+  el.loginBtn.setAttribute("aria-label", loggedIn ? t("logout") : t("login"));
+}
+
+function openLogin() {
+  el.loginModal.hidden = false;
+  el.loginModal.classList.add("is-open");
+  el.loginEmail.focus();
+  Sound.play("click");
+}
+
+function closeLogin() {
+  el.loginModal.classList.remove("is-open");
+  el.loginModal.hidden = true;
+  el.loginForm.reset();
+}
+
+function handleLoginSubmit(event) {
+  event.preventDefault();
+  const email = el.loginEmail.value.trim();
+  const password = el.loginPassword.value;
+  if (!email || !password) return;
+  state.user = { email };
+  persist();
+  closeLogin();
+  renderAuth();
+  tickClock();
+  toast(fmt("toast.loggedIn", { name: userName() }));
+  Sound.play("unlock");
+}
+
+function handleAuthClick() {
+  if (state.user) {
+    state.user = null;
+    persist();
+    renderAuth();
+    tickClock();
+    toast(t("toast.loggedOut"));
+    Sound.play("click");
+    return;
+  }
+  openLogin();
+}
+
 /* ---------- Language ---------- */
 
 function applyLanguage() {
@@ -738,9 +831,13 @@ function applyLanguage() {
   document.querySelectorAll("[data-i18n]").forEach(node => {
     node.textContent = t(node.dataset.i18n);
   });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(node => {
+    node.placeholder = t(node.dataset.i18nPlaceholder);
+  });
   el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
   el.volume.setAttribute("aria-label", t("volume"));
   el.volume.title = t("volume");
+  renderAuth();
   tickClock();
   renderMoodButtons();
   renderQuests();
@@ -773,6 +870,16 @@ el.lang.addEventListener("change", () => {
   state.lang = el.lang.value;
   persist();
   applyLanguage();
+});
+
+el.loginBtn.addEventListener("click", handleAuthClick);
+el.loginClose.addEventListener("click", closeLogin);
+el.loginForm.addEventListener("submit", handleLoginSubmit);
+el.loginModal.addEventListener("click", event => {
+  if (event.target === el.loginModal) closeLogin();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !el.loginModal.hidden) closeLogin();
 });
 
 el.surprise.addEventListener("click", () => {
