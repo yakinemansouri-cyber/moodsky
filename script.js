@@ -605,8 +605,8 @@ function renderParticles(moodId) {
       bolt.className = "bolt";
       bolt.style.left = `${8 + Math.random() * 84}%`;
       bolt.style.top = `${-5 + Math.random() * 25}%`;
-      bolt.style.animationDuration = `${2.6 + Math.random() * 1.8}s`;
-      bolt.style.animationDelay = `${-Math.random() * 4}s`;
+      bolt.style.animationDuration = `${6 + Math.random() * 4}s`;
+      bolt.style.animationDelay = `${-Math.random() * 8}s`;
       fragment.appendChild(bolt);
     }
   }
