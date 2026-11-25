@@ -21,9 +21,7 @@ const STRINGS = {
     confirmClear: "Clear your whole mood diary? This can't be undone.",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
-    testSound: "Test sound",
     volume: "Volume",
-    "toast.soundTest": "🔊 Sound check!",
     "toast.soundOff": "Sound is off — tap 🔊 to turn it on",
     langLabel: "Language",
     moodLabel: "Choose your mood",
@@ -78,9 +76,7 @@ const STRINGS = {
     confirmClear: "Effacer tout ton journal ? Cette action est irréversible.",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
-    testSound: "Tester le son",
     volume: "Volume",
-    "toast.soundTest": "🔊 Test du son !",
     "toast.soundOff": "Son coupé — appuie sur 🔊 pour l'activer",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
@@ -135,9 +131,7 @@ const STRINGS = {
     confirmClear: "هل تريد مسح مفكرة المزاج بالكامل؟ لا يمكن التراجع.",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
-    testSound: "اختبار الصوت",
     volume: "مستوى الصوت",
-    "toast.soundTest": "🔊 فحص الصوت!",
     "toast.soundOff": "الصوت مغلق — اضغط 🔊 لتشغيله",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
@@ -329,7 +323,6 @@ const el = {
   xpFill: document.getElementById("xpFill"),
   secretCount: document.getElementById("secretCount"),
   soundToggle: document.getElementById("soundToggle"),
-  soundTest: document.getElementById("soundTest"),
   volume: document.getElementById("volume"),
   lang: document.getElementById("lang"),
   surprise: document.getElementById("surprise"),
@@ -420,13 +413,11 @@ const Sound = (() => {
     golden: () => [349, 440, 523].forEach((f, i) => tone(f, 1, "sine", 0.12, i * 0.12)),
     unlock: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.1)),
     levelup: () => [440, 554, 659, 880].forEach((f, i) => tone(f, 0.45, "sine", 0.13, i * 0.11)),
-    quest: () => [659, 784, 988].forEach((f, i) => tone(f, 0.35, "triangle", 0.12, i * 0.09)),
-    test: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.6, "triangle", 0.2, i * 0.16))
+    quest: () => [659, 784, 988].forEach((f, i) => tone(f, 0.35, "triangle", 0.12, i * 0.09))
   };
 
   return {
     play(name) { if (!state.sound) return; try { presets[name]?.(); } catch { /* audio blocked */ } },
-    test() { try { presets.test(); } catch { /* audio blocked */ } },
     unlock,
     setVolume
   };
@@ -748,8 +739,6 @@ function applyLanguage() {
     node.textContent = t(node.dataset.i18n);
   });
   el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
-  el.soundTest.setAttribute("aria-label", t("testSound"));
-  el.soundTest.title = t("testSound");
   el.volume.setAttribute("aria-label", t("volume"));
   el.volume.title = t("volume");
   tickClock();
@@ -768,18 +757,6 @@ el.soundToggle.addEventListener("click", () => {
   el.soundToggle.setAttribute("aria-label", state.sound ? t("soundOffLabel") : t("soundOnLabel"));
   persist();
   Sound.play("click");
-});
-
-el.soundTest.addEventListener("click", () => {
-  if (!state.sound) {
-    state.sound = true;
-    el.soundToggle.textContent = "🔊";
-    el.soundToggle.setAttribute("aria-label", t("soundOffLabel"));
-    persist();
-  }
-  Sound.unlock();
-  Sound.test();
-  toast(t("toast.soundTest"));
 });
 
 el.volume.addEventListener("input", () => {
