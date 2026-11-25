@@ -218,7 +218,7 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 }
 .icon-btn { width: 38px; display: grid; place-items: center; font-size: 1rem; }
 .lang-select { padding: 0 8px; }
-.lang-select option { color: #12131c; }
+.lang-select option, .field__input option { color: #12131c; background: #fff; }
 .icon-btn:hover, .lang-select:hover { transform: translateY(-2px); border-color: var(--accent); }
 .icon-btn:focus-visible, .lang-select:focus-visible, .surprise:focus-visible,
 .btn:focus-visible, .link-btn:focus-visible, .mood:focus-visible, .secret-card:focus-visible {
