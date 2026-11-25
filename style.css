@@ -218,7 +218,8 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 }
 .icon-btn { width: 38px; display: grid; place-items: center; font-size: 1rem; }
 .lang-select { padding: 0 8px; }
-.lang-select option, .field__input option { color: #12131c; background: #fff; }
+.lang-select option { color: #12131c; background: #fff; }
+.field__input option { color: #f6f4ff; background: #12141f; }
 .icon-btn:hover, .lang-select:hover { transform: translateY(-2px); border-color: var(--accent); }
 .icon-btn:focus-visible, .lang-select:focus-visible, .surprise:focus-visible,
 .btn:focus-visible, .link-btn:focus-visible, .mood:focus-visible, .secret-card:focus-visible {
@@ -429,6 +430,7 @@ footer { text-align: center; padding: 10px 0 0; font-size: .74rem; color: var(--
 .field--check { grid-template-columns: auto 1fr; align-items: start; gap: 10px; font-size: .82rem; }
 .field--check input { margin-top: 3px; accent-color: var(--accent); }
 .field__input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+select.field__input { background: #12141f; color: var(--ink); color-scheme: dark; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
