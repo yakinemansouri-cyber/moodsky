@@ -26,12 +26,29 @@ const STRINGS = {
     login: "Log in",
     logout: "Log out",
     loginTitle: "Log in to MoodSky",
-    loginSubtitle: "Save your name on this device.",
+    loginSubtitle: "Save your profile on this device.",
+    firstName: "First name",
+    lastName: "Last name",
+    username: "Username",
     email: "Email",
     password: "Password",
-    loginSubmit: "Log in",
+    phone: "Phone",
+    birthdate: "Birth date",
+    gender: "Gender",
+    favoriteMood: "Favorite mood",
+    country: "Country",
+    city: "City",
+    bio: "About you",
+    bioPlaceholder: "Tell us a little about yourself...",
+    terms: "I agree to save this info on this device",
+    selectOption: "Select...",
+    genderFemale: "Female",
+    genderMale: "Male",
+    genderNonbinary: "Non-binary",
+    genderPreferNot: "Prefer not to say",
+    loginSubmit: "Create profile",
     loginClose: "Close",
-    "toast.loggedIn": "Welcome back, {name}!",
+    "toast.loggedIn": "Welcome, {name}!",
     "toast.loggedOut": "Logged out",
     langLabel: "Language",
     moodLabel: "Choose your mood",
@@ -91,12 +108,29 @@ const STRINGS = {
     login: "Connexion",
     logout: "Déconnexion",
     loginTitle: "Connexion à MoodSky",
-    loginSubtitle: "Enregistre ton nom sur cet appareil.",
+    loginSubtitle: "Enregistre ton profil sur cet appareil.",
+    firstName: "Prénom",
+    lastName: "Nom",
+    username: "Nom d'utilisateur",
     email: "E-mail",
     password: "Mot de passe",
-    loginSubmit: "Se connecter",
+    phone: "Téléphone",
+    birthdate: "Date de naissance",
+    gender: "Genre",
+    favoriteMood: "Humeur préférée",
+    country: "Pays",
+    city: "Ville",
+    bio: "À propos de toi",
+    bioPlaceholder: "Dis-nous un peu plus sur toi...",
+    terms: "J'accepte d'enregistrer ces informations sur cet appareil",
+    selectOption: "Sélectionner...",
+    genderFemale: "Femme",
+    genderMale: "Homme",
+    genderNonbinary: "Non binaire",
+    genderPreferNot: "Je préfère ne pas dire",
+    loginSubmit: "Créer le profil",
     loginClose: "Fermer",
-    "toast.loggedIn": "Bon retour, {name} !",
+    "toast.loggedIn": "Bienvenue, {name} !",
     "toast.loggedOut": "Déconnecté",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
@@ -156,12 +190,29 @@ const STRINGS = {
     login: "تسجيل الدخول",
     logout: "تسجيل الخروج",
     loginTitle: "تسجيل الدخول إلى MoodSky",
-    loginSubtitle: "احفظ اسمك على هذا الجهاز.",
+    loginSubtitle: "احفظ ملفك الشخصي على هذا الجهاز.",
+    firstName: "الاسم الأول",
+    lastName: "اسم العائلة",
+    username: "اسم المستخدم",
     email: "البريد الإلكتروني",
     password: "كلمة المرور",
-    loginSubmit: "تسجيل الدخول",
+    phone: "الهاتف",
+    birthdate: "تاريخ الميلاد",
+    gender: "الجنس",
+    favoriteMood: "المزاج المفضل",
+    country: "البلد",
+    city: "المدينة",
+    bio: "نبذة عنك",
+    bioPlaceholder: "أخبرنا قليلاً عن نفسك...",
+    terms: "أوافق على حفظ هذه المعلومات على هذا الجهاز",
+    selectOption: "اختر...",
+    genderFemale: "أنثى",
+    genderMale: "ذكر",
+    genderNonbinary: "غير ثنائي",
+    genderPreferNot: "أفضل عدم القول",
+    loginSubmit: "إنشاء الملف الشخصي",
     loginClose: "إغلاق",
-    "toast.loggedIn": "مرحباً بعودتك، {name}!",
+    "toast.loggedIn": "مرحباً، {name}!",
     "toast.loggedOut": "تم تسجيل الخروج",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
@@ -359,8 +410,19 @@ const el = {
   loginBtn: document.getElementById("loginBtn"),
   loginModal: document.getElementById("loginModal"),
   loginForm: document.getElementById("loginForm"),
+  loginFirstName: document.getElementById("loginFirstName"),
+  loginLastName: document.getElementById("loginLastName"),
+  loginUsername: document.getElementById("loginUsername"),
   loginEmail: document.getElementById("loginEmail"),
   loginPassword: document.getElementById("loginPassword"),
+  loginPhone: document.getElementById("loginPhone"),
+  loginBirthdate: document.getElementById("loginBirthdate"),
+  loginGender: document.getElementById("loginGender"),
+  loginFavoriteMood: document.getElementById("loginFavoriteMood"),
+  loginCountry: document.getElementById("loginCountry"),
+  loginCity: document.getElementById("loginCity"),
+  loginBio: document.getElementById("loginBio"),
+  loginTerms: document.getElementById("loginTerms"),
   loginClose: document.getElementById("loginClose"),
   surprise: document.getElementById("surprise"),
   newMessage: document.getElementById("newMessage"),
@@ -771,8 +833,8 @@ function selectMood(moodId, options = {}) {
 /* ---------- Login ---------- */
 
 function userName() {
-  if (!state.user || !state.user.email) return "";
-  const raw = String(state.user.email).split("@")[0] || "Traveler";
+  if (!state.user) return "";
+  const raw = state.user.firstName || state.user.username || String(state.user.email || "").split("@")[0] || "Traveler";
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
@@ -783,9 +845,24 @@ function renderAuth() {
 }
 
 function openLogin() {
+  if (state.user) {
+    el.loginFirstName.value = state.user.firstName || "";
+    el.loginLastName.value = state.user.lastName || "";
+    el.loginUsername.value = state.user.username || "";
+    el.loginEmail.value = state.user.email || "";
+    el.loginPassword.value = "";
+    el.loginPhone.value = state.user.phone || "";
+    el.loginBirthdate.value = state.user.birthdate || "";
+    el.loginGender.value = state.user.gender || "";
+    el.loginFavoriteMood.value = state.user.favoriteMood || "";
+    el.loginCountry.value = state.user.country || "";
+    el.loginCity.value = state.user.city || "";
+    el.loginBio.value = state.user.bio || "";
+    el.loginTerms.checked = !!state.user.terms;
+  }
   el.loginModal.hidden = false;
   el.loginModal.classList.add("is-open");
-  el.loginEmail.focus();
+  el.loginFirstName.focus();
   Sound.play("click");
 }
 
@@ -797,10 +874,22 @@ function closeLogin() {
 
 function handleLoginSubmit(event) {
   event.preventDefault();
-  const email = el.loginEmail.value.trim();
-  const password = el.loginPassword.value;
-  if (!email || !password) return;
-  state.user = { email };
+  const user = {
+    firstName: el.loginFirstName.value.trim(),
+    lastName: el.loginLastName.value.trim(),
+    username: el.loginUsername.value.trim(),
+    email: el.loginEmail.value.trim(),
+    phone: el.loginPhone.value.trim(),
+    birthdate: el.loginBirthdate.value,
+    gender: el.loginGender.value,
+    favoriteMood: el.loginFavoriteMood.value,
+    country: el.loginCountry.value.trim(),
+    city: el.loginCity.value.trim(),
+    bio: el.loginBio.value.trim(),
+    terms: el.loginTerms.checked
+  };
+  if (!user.firstName || !user.lastName || !user.username || !user.email || !el.loginPassword.value || !user.terms) return;
+  state.user = user;
   persist();
   closeLogin();
   renderAuth();
