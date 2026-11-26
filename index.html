@@ -8,7 +8,7 @@
   <title>MoodSky · How's your inner weather?</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="style.css?v=features2" />
+  <link rel="stylesheet" href="style.css?v=features3" />
 </head>
 <body data-mood="calm">
   <!-- The living sky (decorative) -->
@@ -78,6 +78,10 @@
           <span class="hint" data-i18n="hint">Tip: press 1–8 on your keyboard</span>
         </div>
         <div class="note-wrap">
+          <div class="field">
+            <span data-i18n="tagsLabel">What shaped this mood?</span>
+            <div id="tagPicker" class="tag-picker"></div>
+          </div>
           <label class="field" for="moodNote">
             <span data-i18n="noteLabel">A note for today</span>
             <textarea id="moodNote" class="field__input field__input--area" rows="2" data-i18n-placeholder="notePlaceholder" placeholder="Why do you feel this way? (optional)"></textarea>
@@ -122,6 +126,7 @@
         </div>
         <div id="chart" class="chart" aria-label="Mood chart for the last seven days"></div>
         <div id="insights" class="insights"></div>
+        <div id="badges" class="badges"></div>
         <div class="calendar-head">
           <div>
             <p class="panel__kicker" data-i18n="calendarKicker">MONTH VIEW</p>
@@ -135,9 +140,15 @@
         </div>
         <div id="calendar" class="calendar"></div>
         <div id="calendarDetail" class="calendar-detail" aria-live="polite"></div>
+        <div class="notes-list-wrap">
+          <div class="notes-list-head"><h3 data-i18n="notesListTitle">Notes & entries</h3><input id="notesSearch" class="field__input notes-search" type="search" data-i18n-placeholder="notesSearch" placeholder="Search notes..." /></div>
+          <div id="notesList" class="notes-list"></div>
+        </div>
         <div class="diary-actions">
           <button id="exportData" class="link-btn" type="button" data-i18n="exportData">Export data</button>
           <button id="importData" class="link-btn" type="button" data-i18n="importData">Import data</button>
+          <button id="recapBtn" class="link-btn" type="button" data-i18n="recap">Weekly recap</button>
+          <button id="settingsBtn" class="link-btn" type="button" data-i18n="settings">Settings</button>
           <button id="reset" class="link-btn" type="button" data-i18n="clearDiary">Clear my diary</button>
           <button id="clearAll" class="link-btn link-btn--danger" type="button" data-i18n="clearAll">Clear all data</button>
           <input id="importFile" type="file" accept="application/json" hidden />
@@ -165,6 +176,17 @@
   </div>
 
   <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <div id="settingsModal" class="modal" hidden>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal__head"><h2 id="settingsTitle" data-i18n="settingsTitle">Settings</h2><button id="settingsClose" class="icon-btn" type="button" aria-label="Close">✕</button></div>
+      <div class="modal__form">
+        <label class="field field--check"><input id="settingMotion" type="checkbox" /><span data-i18n="motion">Reduce motion</span></label>
+        <label class="field field--check"><input id="settingReminder" type="checkbox" /><span data-i18n="reminder">Daily reminder</span></label>
+        <label class="field"><span data-i18n="reminderTime">Reminder time</span><input id="settingReminderTime" class="field__input" type="time" /></label>
+      </div>
+    </div>
+  </div>
 
   <div id="loginModal" class="modal" hidden>
     <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
@@ -254,7 +276,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=features2"></script>
+  <script src="script.js?v=features3"></script>
   <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});</script>
 </body>
 </html>

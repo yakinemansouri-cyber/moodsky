@@ -421,6 +421,21 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 .calendar-detail { min-height:24px; margin-top:12px; font-size:.86rem; color:var(--muted); }
 .calendar-detail strong { color:var(--ink); }
 .calendar-detail__note { margin-top:4px; font-size:.82rem; }
+.tag-picker { display:flex; flex-wrap:wrap; gap:8px; }
+.tag-chip, .badge-chip { border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--ink); padding:6px 10px; border-radius:999px; font:inherit; font-size:.75rem; cursor:pointer; }
+.tag-chip.is-on, .badge-chip.is-earned { background:color-mix(in srgb, var(--accent) 28%, transparent); border-color:var(--accent); }
+.badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+.notes-list-wrap { margin-top:22px; }
+.notes-list-head { display:flex; gap:12px; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.notes-list-head h3 { margin:0; font-size:1rem; }
+.notes-search { max-width:260px; }
+.notes-list { display:grid; gap:10px; max-height:280px; overflow:auto; }
+.note-item { padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
+.note-item__head { display:flex; justify-content:space-between; gap:10px; font-size:.83rem; }
+.note-item__head span, .note-item__tags { color:var(--muted); font-size:.74rem; }
+.note-item__body { margin-top:4px; font-size:.84rem; }
+.note-item--empty { color:var(--muted); text-align:center; }
+body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
 /* ===== Breathe ===== */
 .breathe { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 10px 0 6px; }
 .breathe__orb {

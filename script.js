@@ -47,6 +47,14 @@ const STRINGS = {
     breatheReady: "A gentle 60-second reset",
     calendarKicker: "MONTH VIEW",
     calendarTitle: "Mood calendar",
+    tagsLabel: "What shaped this mood?",
+    tagWork: "Work", tagSleep: "Sleep", tagSocial: "Social", tagHealth: "Health", tagFamily: "Family", tagNature: "Nature",
+    settings: "Settings", settingsTitle: "Settings", motion: "Reduce motion", reminder: "Daily reminder", reminderTime: "Reminder time",
+    recap: "Weekly recap", "toast.recap": "Weekly recap downloaded",
+    notesListTitle: "Notes & entries", notesSearch: "Search notes...",
+    badgesTitle: "Badges", badge7: "7-day streak", badge30: "30 entries", badgeNotes: "10 notes",
+    allData: "Clear all data",
+    "toast.reminder": "How's your inner weather today?",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
     volume: "Volume",
@@ -157,6 +165,14 @@ const STRINGS = {
     breatheReady: "Une douce pause de 60 secondes",
     calendarKicker: "VUE DU MOIS",
     calendarTitle: "Calendrier d'humeur",
+    tagsLabel: "Qu'est-ce qui a influencé cette humeur ?",
+    tagWork: "Travail", tagSleep: "Sommeil", tagSocial: "Social", tagHealth: "Santé", tagFamily: "Famille", tagNature: "Nature",
+    settings: "Paramètres", settingsTitle: "Paramètres", motion: "Réduire les animations", reminder: "Rappel quotidien", reminderTime: "Heure du rappel",
+    recap: "Récap hebdo", "toast.recap": "Récap hebdo téléchargé",
+    notesListTitle: "Notes et entrées", notesSearch: "Rechercher des notes...",
+    badgesTitle: "Badges", badge7: "Série de 7 jours", badge30: "30 entrées", badgeNotes: "10 notes",
+    allData: "Effacer toutes les données",
+    "toast.reminder": "Quel temps fait-il en toi aujourd'hui ?",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
     volume: "Volume",
@@ -267,6 +283,14 @@ const STRINGS = {
     breatheReady: "استراحة لطيفة لمدة 60 ثانية",
     calendarKicker: "عرض الشهر",
     calendarTitle: "تقويم المزاج",
+    tagsLabel: "ما الذي شكّل هذا المزاج؟",
+    tagWork: "عمل", tagSleep: "نوم", tagSocial: "اجتماعي", tagHealth: "صحة", tagFamily: "عائلة", tagNature: "طبيعة",
+    settings: "الإعدادات", settingsTitle: "الإعدادات", motion: "تقليل الحركة", reminder: "تذكير يومي", reminderTime: "وقت التذكير",
+    recap: "ملخص الأسبوع", "toast.recap": "تم تنزيل ملخص الأسبوع",
+    notesListTitle: "الملاحظات والسجلات", notesSearch: "ابحث في الملاحظات...",
+    badgesTitle: "الشارات", badge7: "سلسلة 7 أيام", badge30: "30 سجلًا", badgeNotes: "10 ملاحظات",
+    allData: "مسح كل البيانات",
+    "toast.reminder": "كيف هو طقسك الداخلي اليوم؟",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
     volume: "مستوى الصوت",
@@ -414,6 +438,8 @@ const MOODS = {
 
 const BASE_MOODS = ["sunny", "rainy", "stormy", "calm", "electric"];
 const SECRET_SKIES = [{ id: "meteor", level: 2 }, { id: "nebula", level: 3 }, { id: "golden", level: 4 }];
+const TAGS = ["work","sleep","social","health","family","nature"];
+const BADGES = [{id:"streak7", need:()=>computeStreak()>=7, label:"badge7"}, {id:"entries30", need:()=>Object.keys(state.diary).length>=30, label:"badge30"}, {id:"notes10", need:()=>Object.values(state.notes).filter(Boolean).length>=10, label:"badgeNotes"}];
 const ALL_MOODS = [...BASE_MOODS, ...SECRET_SKIES.map(s => s.id)];
 const XP_PER_LEVEL = 80;
 const SAVE_KEY = "moodsky.save.v2";
@@ -424,9 +450,11 @@ const LANGS = ["en", "fr", "ar"];
 
 function defaults() {
   return {
-    diary: {}, notes: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
+    diary: {}, notes: {}, tags: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
     unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {},
-    user: null
+    user: null,
+    settings: { reduceMotion: false, reminderEnabled: false, reminderTime: "20:00", lastReminderDate: "" },
+    badges: []
   };
 }
 
@@ -441,9 +469,14 @@ function loadState() {
     } catch { /* ignore */ }
     return fresh;
   }
-  const merged = { ...fresh, ...raw, notes: { ...fresh.notes, ...(raw.notes || {}) } };
+  const merged = {
+    ...fresh, ...raw,
+    notes: { ...fresh.notes, ...(raw.notes || {}) },
+    tags: { ...fresh.tags, ...(raw.tags || {}) },
+    settings: { ...fresh.settings, ...(raw.settings || {}) },
+    badges: Array.isArray(raw.badges) ? raw.badges : []
+  };
   if (!LANGS.includes(merged.lang)) merged.lang = "en";
-  // Migrate diary: old format was {date: "moodId"}, new is same but notes separate
   Object.keys(merged.diary).forEach(k => {
     const v = merged.diary[k];
     if (v && typeof v === "object") { merged.notes[k] = v.note || merged.notes[k] || ""; merged.diary[k] = v.mood; }
@@ -492,12 +525,23 @@ const el = {
   calPrev: document.getElementById("calPrev"),
   calNext: document.getElementById("calNext"),
   calendarDetail: document.getElementById("calendarDetail"),
+  tagPicker: document.getElementById("tagPicker"),
+  badges: document.getElementById("badges"),
+  notesSearch: document.getElementById("notesSearch"),
+  notesList: document.getElementById("notesList"),
   moodNote: document.getElementById("moodNote"),
   saveNote: document.getElementById("saveNote"),
   shareCard: document.getElementById("shareCard"),
   exportData: document.getElementById("exportData"),
   importData: document.getElementById("importData"),
   importFile: document.getElementById("importFile"),
+  recapBtn: document.getElementById("recapBtn"),
+  settingsBtn: document.getElementById("settingsBtn"),
+  settingsModal: document.getElementById("settingsModal"),
+  settingsClose: document.getElementById("settingsClose"),
+  settingMotion: document.getElementById("settingMotion"),
+  settingReminder: document.getElementById("settingReminder"),
+  settingReminderTime: document.getElementById("settingReminderTime"),
   clearAll: document.getElementById("clearAll"),
   breatheBtn: document.getElementById("breatheBtn"),
   breatheOrb: document.getElementById("breatheOrb"),
@@ -802,18 +846,32 @@ function renderInsights() {
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
     const id = state.diary[dateKey(d)];
-    if (id && MOODS[id]) days.push(id);
+    if (id && MOODS[id]) days.push({ id, key: dateKey(d) });
   }
-  if (!days.length) { el.insights.replaceChildren(); return; }
-  const counts = {};
-  let sum = 0;
-  days.forEach(id => { counts[id] = (counts[id] || 0) + 1; sum += MOODS[id].score; });
+  if (!days.length) { el.insights.replaceChildren(); renderBadges(); return; }
+  const counts = {}; let sum = 0; const tagCounts = {};
+  days.forEach(({ id, key }) => { counts[id] = (counts[id] || 0) + 1; sum += MOODS[id].score; (state.tags[key]||[]).forEach(tag => tagCounts[tag]=(tagCounts[tag]||0)+1); });
   const topId = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+  const topTag = Object.keys(tagCounts).sort((a,b)=>tagCounts[b]-tagCounts[a])[0];
   const avg = (sum / days.length).toFixed(1);
   el.insights.innerHTML =
     `<div class="insight"><span class="insight__label">${t("topMood")}</span><strong>${MOODS[topId].emoji} ${t("mood." + topId)}</strong></div>` +
     `<div class="insight"><span class="insight__label">${t("avgScore")}</span><strong>${avg} / 5</strong></div>` +
-    `<div class="insight"><span class="insight__label">${t("stat.entries." + (days.length === 1 ? "one" : "many")).replace("{n}", days.length)}</span><strong>${days.length} / 7</strong></div>`;
+    `<div class="insight"><span class="insight__label">${topTag ? t("tagsLabel").split("?")[0] : t("stat.entries." + (days.length === 1 ? "one" : "many")).replace("{n}", days.length)}</span><strong>${topTag ? t("tag"+topTag.charAt(0).toUpperCase()+topTag.slice(1)) : days.length + " / 7"}</strong></div>`;
+  renderBadges();
+}
+
+function renderBadges() {
+  BADGES.forEach(b => { if (b.need() && !state.badges.includes(b.id)) state.badges.push(b.id); });
+  const frag = document.createDocumentFragment();
+  BADGES.forEach(b => {
+    const earned = state.badges.includes(b.id);
+    const elb = document.createElement("span");
+    elb.className = "badge-chip" + (earned ? " is-earned" : "");
+    elb.textContent = (earned ? "★ " : "☆ ") + t(b.label);
+    frag.appendChild(elb);
+  });
+  el.badges.replaceChildren(frag);
 }
 
 function renderCalendar() {
@@ -839,10 +897,11 @@ function renderCalendar() {
     cell.className = "cal__cell" + (mood ? " cal__cell--mood" : "") + (key === todayKey ? " cal__cell--today" : "");
     if (mood) cell.style.background = mood.gradient;
     cell.textContent = mood ? mood.emoji : String(day);
-    cell.title = mood ? `${day} · ${t("mood." + moodId)}${state.notes[key] ? "\n" + state.notes[key] : ""}` : String(day);
+    const tags = (state.tags[key] || []).map(tag => t("tag"+tag.charAt(0).toUpperCase()+tag.slice(1))).join(", ");
+    cell.title = mood ? `${day} · ${t("mood." + moodId)}${tags ? "\n"+tags : ""}${state.notes[key] ? "\n" + state.notes[key] : ""}` : String(day);
     cell.addEventListener("click", () => {
       if (!mood) { el.calendarDetail.textContent = ""; return; }
-      el.calendarDetail.innerHTML = `<strong>${mood.emoji} ${t("mood." + moodId)}</strong> · ${d.toLocaleDateString(state.lang, { month: "short", day: "numeric" })}${state.notes[key] ? `<div class="calendar-detail__note">${escapeHtml(state.notes[key])}</div>` : ""}`;
+      el.calendarDetail.innerHTML = `<strong>${mood.emoji} ${t("mood." + moodId)}</strong> · ${d.toLocaleDateString(state.lang, { month: "short", day: "numeric" })}${tags ? `<div class="calendar-detail__note">${escapeHtml(tags)}</div>` : ""}${state.notes[key] ? `<div class="calendar-detail__note">${escapeHtml(state.notes[key])}</div>` : ""}`;
     });
     frag.appendChild(cell);
   }
@@ -991,9 +1050,11 @@ function selectMood(moodId, options = {}) {
   renderQuests();
   renderChart();
   renderCalendar();
+  renderNotesList();
   renderParticles(moodId);
   showMessage(moodId);
   el.moodNote.value = state.notes[key] || "";
+  renderTagPicker();
 
   if (!options.silent) {
     Sound.play("click");
@@ -1107,6 +1168,7 @@ function applyLanguage() {
   renderQuests();
   renderChart();
   renderCalendar();
+  renderNotesList();
   renderGame();
   showMessage(currentMood);
 }
@@ -1174,10 +1236,21 @@ el.saveNote.addEventListener("click", () => {
   const val = el.moodNote.value.trim();
   if (val) state.notes[key] = val; else delete state.notes[key];
   persist();
-  renderChart();
+  renderChart(); renderCalendar(); renderNotesList(); renderBadges();
   toast(t("toast.noteSaved"));
   Sound.play("click");
 });
+el.notesSearch.addEventListener("input", renderNotesList);
+el.settingsBtn.addEventListener("click", openSettings);
+el.settingsClose.addEventListener("click", closeSettings);
+el.settingsModal.addEventListener("click", e => { if (e.target === el.settingsModal) closeSettings(); });
+el.settingMotion.addEventListener("change", () => { state.settings.reduceMotion = el.settingMotion.checked; persist(); applyMotionSetting(); });
+el.settingReminder.addEventListener("change", async () => {
+  state.settings.reminderEnabled = el.settingReminder.checked;
+  if (state.settings.reminderEnabled && "Notification" in window && Notification.permission === "default") await Notification.requestPermission();
+  persist();
+});
+el.settingReminderTime.addEventListener("change", () => { state.settings.reminderTime = el.settingReminderTime.value || "20:00"; persist(); });
 
 el.exportData.addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
@@ -1248,6 +1321,93 @@ function wrapText(g, text, x, y, max, lh) {
   g.fillText(line, x, y);
 }
 
+/* ---------- Tags / Notes list / Settings / Recap ---------- */
+function renderTagPicker() {
+  const key = dateKey(new Date());
+  const selected = state.tags[key] || [];
+  const frag = document.createDocumentFragment();
+  TAGS.forEach(tag => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tag-chip" + (selected.includes(tag) ? " is-on" : "");
+    b.textContent = t("tag" + tag.charAt(0).toUpperCase() + tag.slice(1));
+    b.addEventListener("click", () => {
+      const cur = state.tags[key] || [];
+      state.tags[key] = cur.includes(tag) ? cur.filter(x => x !== tag) : [...cur, tag];
+      if (!state.tags[key].length) delete state.tags[key];
+      persist(); renderTagPicker(); renderCalendar(); renderNotesList();
+    });
+    frag.appendChild(b);
+  });
+  el.tagPicker.replaceChildren(frag);
+}
+
+function renderNotesList() {
+  const q = (el.notesSearch.value || "").toLowerCase();
+  const keys = Object.keys(state.diary).sort().reverse().filter(k => {
+    const note = (state.notes[k] || "").toLowerCase();
+    const tags = (state.tags[k] || []).join(" ").toLowerCase();
+    const mood = t("mood." + state.diary[k]).toLowerCase();
+    return !q || note.includes(q) || tags.includes(q) || mood.includes(q) || k.includes(q);
+  }).slice(0, 30);
+  const frag = document.createDocumentFragment();
+  keys.forEach(k => {
+    const mood = MOODS[state.diary[k]]; if (!mood) return;
+    const item = document.createElement("div"); item.className = "note-item";
+    const tags = (state.tags[k] || []).map(tag => t("tag"+tag.charAt(0).toUpperCase()+tag.slice(1))).join(" · ");
+    item.innerHTML = `<div class="note-item__head"><strong>${mood.emoji} ${t("mood."+state.diary[k])}</strong><span>${k}</span></div>${tags ? `<div class="note-item__tags">${escapeHtml(tags)}</div>`:""}${state.notes[k] ? `<div class="note-item__body">${escapeHtml(state.notes[k])}</div>`:""}`;
+    frag.appendChild(item);
+  });
+  if (!keys.length) { const empty = document.createElement("div"); empty.className = "note-item note-item--empty"; empty.textContent = t("noEntry"); frag.appendChild(empty); }
+  el.notesList.replaceChildren(frag);
+}
+
+function applyMotionSetting() {
+  document.body.classList.toggle("reduce-motion", !!state.settings.reduceMotion);
+}
+
+function openSettings() {
+  el.settingMotion.checked = !!state.settings.reduceMotion;
+  el.settingReminder.checked = !!state.settings.reminderEnabled;
+  el.settingReminderTime.value = state.settings.reminderTime || "20:00";
+  el.settingsModal.hidden = false;
+}
+function closeSettings() { el.settingsModal.hidden = true; }
+
+function checkReminder() {
+  if (!state.settings.reminderEnabled) return;
+  const now = new Date();
+  const hm = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const today = dateKey(now);
+  if (hm === state.settings.reminderTime && state.settings.lastReminderDate !== today) {
+    state.settings.lastReminderDate = today; persist();
+    if ("Notification" in window && Notification.permission === "granted") new Notification("MoodSky", { body: t("toast.reminder") });
+    else toast(t("toast.reminder"));
+  }
+}
+
+el.recapBtn.addEventListener("click", async () => {
+  const days = [];
+  for (let i = 6; i >= 0; i--) { const d=new Date(); d.setDate(d.getDate()-i); const k=dateKey(d); const id=state.diary[k]; if(id&&MOODS[id]) days.push({id,k}); }
+  const c=document.createElement("canvas"); c.width=900; c.height=560; const g=c.getContext("2d");
+  const grad=g.createLinearGradient(0,0,0,560); grad.addColorStop(0,"#223a5e"); grad.addColorStop(1,"#4b2c6f"); g.fillStyle=grad; g.fillRect(0,0,900,560);
+  g.fillStyle="#fff"; g.font="bold 40px Segoe UI,sans-serif"; g.fillText("MoodSky · "+t("recap"), 50, 68);
+  g.font="24px Segoe UI,sans-serif"; g.fillStyle="rgba(255,255,255,.85)";
+  if (!days.length) { g.fillText(t("noEntry"), 50, 140); }
+  else {
+    const counts={}; let sum=0; days.forEach(d=>{counts[d.id]=(counts[d.id]||0)+1; sum+=MOODS[d.id].score;});
+    const top=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]; const avg=(sum/days.length).toFixed(1);
+    g.fillText(`${t("topMood")}: ${MOODS[top].emoji} ${t("mood."+top)}`, 50, 130);
+    g.fillText(`${t("avgScore")}: ${avg}/5`, 50, 170);
+    g.fillText(`${t("stat.entries.many").replace("{n}", days.length)} / 7`, 50, 210);
+    let y=260; g.font="22px Segoe UI,sans-serif";
+    days.slice(-5).reverse().forEach(d=>{ g.fillStyle="rgba(255,255,255,.9)"; g.fillText(`${MOODS[d.id].emoji} ${d.k} - ${t("mood."+d.id)}`, 50, y); y+=38; });
+  }
+  const blob = await new Promise(r=>c.toBlob(r,"image/png"));
+  const a=document.createElement("a"); a.download="moodsky-recap.png"; a.href=URL.createObjectURL(blob); a.click(); URL.revokeObjectURL(a.href);
+  toast(t("toast.recap"));
+});
+
 /* ---------- Breathe ---------- */
 let breatheTimer = null, breatheLeft = 60;
 function setBreathePhase(text, scale) {
@@ -1317,9 +1477,12 @@ document.addEventListener("keydown", event => {
 
 el.soundToggle.textContent = state.sound ? "🔊" : "🔇";
 el.volume.value = String(state.volume ?? 80);
+applyMotionSetting();
 applyLanguage();
 tickClock();
 setInterval(tickClock, 1000);
+setInterval(checkReminder, 30000);
 selectMood(MOODS[savedMood()] ? savedMood() : "calm", { silent: true, noLog: true });
+renderTagPicker(); renderNotesList(); checkReminder();
 
 function savedMood() { return state.diary[dateKey(new Date())] || state.lastMood; }
