@@ -19,6 +19,29 @@ const STRINGS = {
     clearDiary: "Clear my diary",
     footer: "Your moods stay in this browser. No cloud, no judgment. ☁️",
     confirmClear: "Clear your whole mood diary? This can't be undone.",
+    noteLabel: "A note for today",
+    notePlaceholder: "Why do you feel this way? (optional)",
+    saveNote: "Save note",
+    "toast.noteSaved": "Note saved",
+    insightsKicker: "THIS WEEK",
+    insightsTitle: "Your insights",
+    topMood: "Most common",
+    avgScore: "Average mood",
+    exportData: "Export data",
+    importData: "Import data",
+    share: "Share card",
+    "toast.exported": "Data exported",
+    "toast.imported": "Data imported",
+    "toast.importError": "Could not import that file",
+    "toast.shared": "Card downloaded",
+    breatheKicker: "CALM RESET",
+    breatheTitle: "Breathe with the sky",
+    breatheStart: "Start breathing",
+    breatheStop: "Stop",
+    breatheIn: "Breathe in...",
+    breatheHold: "Hold...",
+    breatheOut: "Breathe out...",
+    breatheReady: "A gentle 60-second reset",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
     volume: "Volume",
@@ -101,6 +124,29 @@ const STRINGS = {
     clearDiary: "Effacer mon journal",
     footer: "Tes humeurs restent dans ce navigateur. Pas de cloud, pas de jugement. ☁️",
     confirmClear: "Effacer tout ton journal ? Cette action est irréversible.",
+    noteLabel: "Une note pour aujourd'hui",
+    notePlaceholder: "Pourquoi te sens-tu comme ça ? (optionnel)",
+    saveNote: "Enregistrer la note",
+    "toast.noteSaved": "Note enregistrée",
+    insightsKicker: "CETTE SEMAINE",
+    insightsTitle: "Tes aperçus",
+    topMood: "Humeur fréquente",
+    avgScore: "Humeur moyenne",
+    exportData: "Exporter les données",
+    importData: "Importer des données",
+    share: "Partager la carte",
+    "toast.exported": "Données exportées",
+    "toast.imported": "Données importées",
+    "toast.importError": "Impossible d'importer ce fichier",
+    "toast.shared": "Carte téléchargée",
+    breatheKicker: "PAUSE CALME",
+    breatheTitle: "Respire avec le ciel",
+    breatheStart: "Commencer à respirer",
+    breatheStop: "Arrêter",
+    breatheIn: "Inspire...",
+    breatheHold: "Retiens...",
+    breatheOut: "Expire...",
+    breatheReady: "Une douce pause de 60 secondes",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
     volume: "Volume",
@@ -183,6 +229,29 @@ const STRINGS = {
     clearDiary: "مسح مفكرتي",
     footer: "تبقى حالاتك في هذا المتصفح. بلا سحابة، بلا أحكام. ☁️",
     confirmClear: "هل تريد مسح مفكرة المزاج بالكامل؟ لا يمكن التراجع.",
+    noteLabel: "ملاحظة لهذا اليوم",
+    notePlaceholder: "لماذا تشعر بهذا؟ (اختياري)",
+    saveNote: "حفظ الملاحظة",
+    "toast.noteSaved": "تم حفظ الملاحظة",
+    insightsKicker: "هذا الأسبوع",
+    insightsTitle: "لمحاتك",
+    topMood: "الأكثر شيوعاً",
+    avgScore: "متوسط المزاج",
+    exportData: "تصدير البيانات",
+    importData: "استيراد البيانات",
+    share: "مشاركة البطاقة",
+    "toast.exported": "تم تصدير البيانات",
+    "toast.imported": "تم استيراد البيانات",
+    "toast.importError": "تعذر استيراد هذا الملف",
+    "toast.shared": "تم تنزيل البطاقة",
+    breatheKicker: "استراحة هادئة",
+    breatheTitle: "تنفس مع السماء",
+    breatheStart: "ابدأ التنفس",
+    breatheStop: "إيقاف",
+    breatheIn: "شهيق...",
+    breatheHold: "احبس...",
+    breatheOut: "زفير...",
+    breatheReady: "استراحة لطيفة لمدة 60 ثانية",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
     volume: "مستوى الصوت",
@@ -340,7 +409,7 @@ const LANGS = ["en", "fr", "ar"];
 
 function defaults() {
   return {
-    diary: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
+    diary: {}, notes: {}, xp: 0, lastLevel: 1, tried: [], achievements: [],
     unlocked: [], lang: "en", sound: true, volume: 80, lastMood: "calm", lastMessageIndex: {},
     user: null
   };
@@ -357,8 +426,13 @@ function loadState() {
     } catch { /* ignore */ }
     return fresh;
   }
-  const merged = { ...fresh, ...raw };
+  const merged = { ...fresh, ...raw, notes: { ...fresh.notes, ...(raw.notes || {}) } };
   if (!LANGS.includes(merged.lang)) merged.lang = "en";
+  // Migrate diary: old format was {date: "moodId"}, new is same but notes separate
+  Object.keys(merged.diary).forEach(k => {
+    const v = merged.diary[k];
+    if (v && typeof v === "object") { merged.notes[k] = v.note || merged.notes[k] || ""; merged.diary[k] = v.mood; }
+  });
   merged.lastLevel = levelOf(merged.xp);
   return merged;
 }
@@ -396,6 +470,17 @@ const el = {
   chart: document.getElementById("chart"),
   streak: document.getElementById("streak"),
   total: document.getElementById("total"),
+  insights: document.getElementById("insights"),
+  moodNote: document.getElementById("moodNote"),
+  saveNote: document.getElementById("saveNote"),
+  shareCard: document.getElementById("shareCard"),
+  exportData: document.getElementById("exportData"),
+  importData: document.getElementById("importData"),
+  importFile: document.getElementById("importFile"),
+  breatheBtn: document.getElementById("breatheBtn"),
+  breatheOrb: document.getElementById("breatheOrb"),
+  breathePhase: document.getElementById("breathePhase"),
+  breatheTimer: document.getElementById("breatheTimer"),
   moodPicker: document.getElementById("moodPicker"),
   secretPicker: document.getElementById("secretPicker"),
   secretGrid: document.getElementById("secretGrid"),
@@ -650,8 +735,10 @@ function renderChart() {
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
-    const moodId = state.diary[dateKey(date)];
+    const key = dateKey(date);
+    const moodId = state.diary[key];
     const mood = moodId ? MOODS[moodId] : null;
+    const note = state.notes[key];
 
     const col = document.createElement("div");
     col.className = "chart__col" + (i === 0 ? " chart__col--today" : "");
@@ -661,7 +748,9 @@ function renderChart() {
     bar.className = "chart__bar";
     bar.style.height = mood ? `${mood.score * 20}%` : "4%";
     if (mood) bar.style.background = mood.gradient;
-    bar.title = mood ? `${t("mood." + moodId)} · ${mood.score}/5` : t("noEntry");
+    let title = mood ? `${t("mood." + moodId)} · ${mood.score}/5` : t("noEntry");
+    if (note) title += `\n${note}`;
+    bar.title = title;
     const emoji = document.createElement("div");
     emoji.className = "chart__emoji";
     emoji.textContent = mood ? mood.emoji : "";
@@ -670,6 +759,11 @@ function renderChart() {
     label.textContent = i === 0 ? t("today") : new Intl.DateTimeFormat(state.lang, { weekday: "narrow" }).format(date);
     track.appendChild(bar);
     col.append(track, emoji, label);
+    if (note) {
+      const dot = document.createElement("span");
+      dot.className = "chart__note-dot";
+      col.appendChild(dot);
+    }
     fragment.appendChild(col);
   }
   el.chart.replaceChildren(fragment);
@@ -678,6 +772,26 @@ function renderChart() {
   const streak = computeStreak();
   el.total.textContent = fmt(entries === 1 ? "stat.entries.one" : "stat.entries.many", { n: entries });
   el.streak.textContent = fmt(streak === 1 ? "stat.streak.one" : "stat.streak.many", { n: streak });
+  renderInsights();
+}
+
+function renderInsights() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const id = state.diary[dateKey(d)];
+    if (id && MOODS[id]) days.push(id);
+  }
+  if (!days.length) { el.insights.replaceChildren(); return; }
+  const counts = {};
+  let sum = 0;
+  days.forEach(id => { counts[id] = (counts[id] || 0) + 1; sum += MOODS[id].score; });
+  const topId = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+  const avg = (sum / days.length).toFixed(1);
+  el.insights.innerHTML =
+    `<div class="insight"><span class="insight__label">${t("topMood")}</span><strong>${MOODS[topId].emoji} ${t("mood." + topId)}</strong></div>` +
+    `<div class="insight"><span class="insight__label">${t("avgScore")}</span><strong>${avg} / 5</strong></div>` +
+    `<div class="insight"><span class="insight__label">${t("stat.entries." + (days.length === 1 ? "one" : "many")).replace("{n}", days.length)}</span><strong>${days.length} / 7</strong></div>`;
 }
 
 /* ---------- Game ---------- */
@@ -822,6 +936,7 @@ function selectMood(moodId, options = {}) {
   renderChart();
   renderParticles(moodId);
   showMessage(moodId);
+  el.moodNote.value = state.notes[key] || "";
 
   if (!options.silent) {
     Sound.play("click");
@@ -982,9 +1097,111 @@ el.newMessage.addEventListener("click", () => {
   showMessage(currentMood, true);
 });
 
+el.saveNote.addEventListener("click", () => {
+  const key = dateKey(new Date());
+  const val = el.moodNote.value.trim();
+  if (val) state.notes[key] = val; else delete state.notes[key];
+  persist();
+  renderChart();
+  toast(t("toast.noteSaved"));
+  Sound.play("click");
+});
+
+el.exportData.addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "moodsky-data.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(t("toast.exported"));
+});
+el.importData.addEventListener("click", () => el.importFile.click());
+el.importFile.addEventListener("change", async () => {
+  const file = el.importFile.files[0];
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    if (!data || typeof data !== "object" || !data.diary) throw new Error("bad");
+    state = { ...defaults(), ...data, notes: { ...(data.notes || {}) } };
+    if (!LANGS.includes(state.lang)) state.lang = "en";
+    persist();
+    applyLanguage();
+    selectMood(MOODS[savedMood()] ? savedMood() : "calm", { silent: true, noLog: true });
+    toast(t("toast.imported"));
+  } catch { toast(t("toast.importError")); }
+  el.importFile.value = "";
+});
+
+el.shareCard.addEventListener("click", () => {
+  const mood = MOODS[currentMood];
+  const c = document.createElement("canvas"); c.width = 900; c.height = 500;
+  const g = c.getContext("2d");
+  const grad = g.createLinearGradient(0, 0, 0, 500);
+  const tmp = document.createElement("canvas").width; // noop
+  // parse gradient colors from mood.gradient
+  const colors = mood.gradient.match(/#[0-9a-fA-F]{6}/g) || ["#4cc9f0", "#f72585"];
+  grad.addColorStop(0, colors[0]); grad.addColorStop(1, colors[1] || colors[0]);
+  g.fillStyle = grad; g.fillRect(0, 0, 900, 500);
+  g.fillStyle = "rgba(0,0,0,0.18)"; g.fillRect(0, 0, 900, 500);
+  g.fillStyle = "#fff"; g.font = "bold 42px Segoe UI, sans-serif"; g.fillText("MoodSky", 50, 70);
+  g.font = "72px serif"; g.fillText(mood.emoji, 50, 170);
+  g.font = "bold 48px Segoe UI, sans-serif"; g.fillText(t("mood." + currentMood), 140, 155);
+  g.font = "28px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.9)";
+  g.fillText(t("forecast." + currentMood), 50, 220);
+  g.font = "italic 26px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.95)";
+  const msg = el.message.textContent || "";
+  wrapText(g, msg, 50, 290, 800, 36);
+  g.font = "22px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.75)";
+  g.fillText(new Date().toLocaleDateString(state.lang, { weekday: "long", month: "long", day: "numeric", year: "numeric" }), 50, 455);
+  const a = document.createElement("a"); a.download = `moodsky-${currentMood}.png`; a.href = c.toDataURL("image/png"); a.click();
+  toast(t("toast.shared"));
+});
+function wrapText(g, text, x, y, max, lh) {
+  const words = text.split(" "); let line = "";
+  for (const w of words) { const test = line + w + " "; if (g.measureText(test).width > max && line) { g.fillText(line, x, y); line = w + " "; y += lh; } else line = test; }
+  g.fillText(line, x, y);
+}
+
+/* ---------- Breathe ---------- */
+let breatheTimer = null, breatheLeft = 60;
+function setBreathePhase(text, scale) {
+  el.breathePhase.textContent = text;
+  el.breatheOrb.style.transform = `scale(${scale})`;
+}
+function stopBreathe() {
+  clearInterval(breatheTimer); breatheTimer = null; breatheLeft = 60;
+  el.breatheBtn.textContent = t("breatheStart");
+  el.breatheTimer.textContent = "60s";
+  setBreathePhase(t("breatheReady"), 1);
+  el.breatheOrb.classList.remove("is-active");
+}
+function startBreathe() {
+  if (breatheTimer) { stopBreathe(); return; }
+  breatheLeft = 60;
+  el.breatheBtn.textContent = t("breatheStop");
+  el.breatheOrb.classList.add("is-active");
+  const cycle = 12000; // 4s in, 4s hold, 4s out
+  const start = Date.now();
+  const tick = () => {
+    const elapsed = Math.floor((Date.now() - start) / 1000);
+    breatheLeft = Math.max(0, 60 - elapsed);
+    el.breatheTimer.textContent = `${breatheLeft}s`;
+    const phase = ((Date.now() - start) % cycle) / cycle;
+    if (phase < 1/3) setBreathePhase(t("breatheIn"), 1.25);
+    else if (phase < 2/3) setBreathePhase(t("breatheHold"), 1.25);
+    else setBreathePhase(t("breatheOut"), 0.9);
+    if (breatheLeft <= 0) stopBreathe();
+  };
+  tick();
+  breatheTimer = setInterval(tick, 250);
+}
+el.breatheBtn.addEventListener("click", startBreathe);
+
 el.reset.addEventListener("click", () => {
   if (!confirm(t("confirmClear"))) return;
   state.diary = {};
+  state.notes = {};
   state.tried = [];
   state.achievements = [];
   state.xp = 0;

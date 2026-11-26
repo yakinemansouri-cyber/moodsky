@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="MoodSky — a tiny emotional weather station game. Paint the sky, earn XP, unlock secret skies." />
   <title>MoodSky · How's your inner weather?</title>
-  <link rel="stylesheet" href="style.css?v=electric-glow" />
+  <link rel="stylesheet" href="style.css?v=features1" />
 </head>
 <body data-mood="calm">
   <!-- The living sky (decorative) -->
@@ -71,7 +71,15 @@
         <blockquote id="message" aria-live="polite">Loading your forecast…</blockquote>
         <div class="panel__actions">
           <button id="newMessage" class="btn" type="button">↻ <span data-i18n="another">Another message</span></button>
+          <button id="shareCard" class="btn" type="button">⤴ <span data-i18n="share">Share card</span></button>
           <span class="hint" data-i18n="hint">Tip: press 1–8 on your keyboard</span>
+        </div>
+        <div class="note-wrap">
+          <label class="field" for="moodNote">
+            <span data-i18n="noteLabel">A note for today</span>
+            <textarea id="moodNote" class="field__input field__input--area" rows="2" data-i18n-placeholder="notePlaceholder" placeholder="Why do you feel this way? (optional)"></textarea>
+          </label>
+          <button id="saveNote" class="btn btn--small" type="button" data-i18n="saveNote">Save note</button>
         </div>
       </section>
 
@@ -110,7 +118,29 @@
           </div>
         </div>
         <div id="chart" class="chart" aria-label="Mood chart for the last seven days"></div>
-        <button id="reset" class="link-btn" type="button" data-i18n="clearDiary">Clear my diary</button>
+        <div id="insights" class="insights"></div>
+        <div class="diary-actions">
+          <button id="exportData" class="link-btn" type="button" data-i18n="exportData">Export data</button>
+          <button id="importData" class="link-btn" type="button" data-i18n="importData">Import data</button>
+          <button id="reset" class="link-btn" type="button" data-i18n="clearDiary">Clear my diary</button>
+          <input id="importFile" type="file" accept="application/json" hidden />
+        </div>
+      </section>
+
+      <section id="breathePanel" class="panel panel--breathe">
+        <div class="panel__head">
+          <div>
+            <p class="panel__kicker" data-i18n="breatheKicker">CALM RESET</p>
+            <h2 data-i18n="breatheTitle">Breathe with the sky</h2>
+          </div>
+        </div>
+        <div class="breathe">
+          <div class="breathe__orb" id="breatheOrb"><span id="breathePhase" data-i18n="breatheReady">A gentle 60-second reset</span></div>
+          <div class="breathe__meta">
+            <span id="breatheTimer">60s</span>
+            <button id="breatheBtn" class="btn" type="button" data-i18n="breatheStart">Start breathing</button>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -207,6 +237,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=electric-glow"></script>
+  <script src="script.js?v=features1"></script>
 </body>
 </html>

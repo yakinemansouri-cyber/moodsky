@@ -399,6 +399,24 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 /* ===== Diary ===== */
 .stats { display: flex; gap: 8px; flex-wrap: wrap; }
 .stats span { padding: 7px 12px; border-radius: 999px; font-size: .73rem; background: rgba(255, 255, 255, .1); color: var(--muted); }
+.note-wrap { margin-top: 20px; display: grid; gap: 10px; }
+.note-wrap .field__input--area { min-height: 64px; }
+.insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.insight { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
+.insight__label { display: block; font-size: .7rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+.insight strong { font-size: .95rem; }
+.diary-actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
+.chart__note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: -4px; }
+/* ===== Breathe ===== */
+.breathe { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 10px 0 6px; }
+.breathe__orb {
+  width: 180px; height: 180px; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 20px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent), rgba(255,255,255,.04) 70%);
+  border: 1px solid rgba(255,255,255,.14); box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 20%, transparent);
+  transition: transform 3.8s ease-in-out; font-size: .95rem; font-weight: 600;
+}
+.breathe__orb.is-active { box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 35%, transparent); }
+.breathe__meta { display: flex; align-items: center; gap: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .chart {
   display: grid; grid-template-columns: repeat(7, 1fr);
   gap: 12px; align-items: end; height: 180px; margin-top: 28px;
@@ -437,6 +455,8 @@ footer { text-align: center; padding: 10px 0 0; font-size: .74rem; color: var(--
   .chart__emoji { display: none; }
   .secret-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr; }
+  .insights { grid-template-columns: 1fr; }
+  .breathe__orb { width: 150px; height: 150px; }
   .modal__panel { padding: 20px; }
   .toasts { inset-inline: 14px; bottom: 14px; }
 }
