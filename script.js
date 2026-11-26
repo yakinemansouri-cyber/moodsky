@@ -29,11 +29,14 @@ const STRINGS = {
     avgScore: "Average mood",
     exportData: "Export data",
     importData: "Import data",
+    clearAll: "Clear all data",
+    confirmClearAll: "Clear all MoodSky data, including profile and progress? This can't be undone.",
     share: "Share card",
     "toast.exported": "Data exported",
     "toast.imported": "Data imported",
     "toast.importError": "Could not import that file",
-    "toast.shared": "Card downloaded",
+    "toast.shared": "Card ready",
+    "toast.clearedAll": "All data cleared",
     breatheKicker: "CALM RESET",
     breatheTitle: "Breathe with the sky",
     breatheStart: "Start breathing",
@@ -42,6 +45,8 @@ const STRINGS = {
     breatheHold: "Hold...",
     breatheOut: "Breathe out...",
     breatheReady: "A gentle 60-second reset",
+    calendarKicker: "MONTH VIEW",
+    calendarTitle: "Mood calendar",
     soundOffLabel: "Turn sound off",
     soundOnLabel: "Turn sound on",
     volume: "Volume",
@@ -134,11 +139,14 @@ const STRINGS = {
     avgScore: "Humeur moyenne",
     exportData: "Exporter les données",
     importData: "Importer des données",
+    clearAll: "Effacer toutes les données",
+    confirmClearAll: "Effacer toutes les données MoodSky, y compris le profil et la progression ? Cette action est irréversible.",
     share: "Partager la carte",
     "toast.exported": "Données exportées",
     "toast.imported": "Données importées",
     "toast.importError": "Impossible d'importer ce fichier",
-    "toast.shared": "Carte téléchargée",
+    "toast.shared": "Carte prête",
+    "toast.clearedAll": "Toutes les données effacées",
     breatheKicker: "PAUSE CALME",
     breatheTitle: "Respire avec le ciel",
     breatheStart: "Commencer à respirer",
@@ -147,6 +155,8 @@ const STRINGS = {
     breatheHold: "Retiens...",
     breatheOut: "Expire...",
     breatheReady: "Une douce pause de 60 secondes",
+    calendarKicker: "VUE DU MOIS",
+    calendarTitle: "Calendrier d'humeur",
     soundOffLabel: "Couper le son",
     soundOnLabel: "Activer le son",
     volume: "Volume",
@@ -239,11 +249,14 @@ const STRINGS = {
     avgScore: "متوسط المزاج",
     exportData: "تصدير البيانات",
     importData: "استيراد البيانات",
+    clearAll: "مسح كل البيانات",
+    confirmClearAll: "مسح كل بيانات MoodSky بما فيها الملف الشخصي والتقدم؟ لا يمكن التراجع.",
     share: "مشاركة البطاقة",
     "toast.exported": "تم تصدير البيانات",
     "toast.imported": "تم استيراد البيانات",
     "toast.importError": "تعذر استيراد هذا الملف",
-    "toast.shared": "تم تنزيل البطاقة",
+    "toast.shared": "البطاقة جاهزة",
+    "toast.clearedAll": "تم مسح كل البيانات",
     breatheKicker: "استراحة هادئة",
     breatheTitle: "تنفس مع السماء",
     breatheStart: "ابدأ التنفس",
@@ -252,6 +265,8 @@ const STRINGS = {
     breatheHold: "احبس...",
     breatheOut: "زفير...",
     breatheReady: "استراحة لطيفة لمدة 60 ثانية",
+    calendarKicker: "عرض الشهر",
+    calendarTitle: "تقويم المزاج",
     soundOffLabel: "إيقاف الصوت",
     soundOnLabel: "تشغيل الصوت",
     volume: "مستوى الصوت",
@@ -439,6 +454,7 @@ function loadState() {
 
 let state = loadState();
 let currentMood = MOODS[state.lastMood] ? state.lastMood : "calm";
+let calendarMonth = new Date(); calendarMonth.setDate(1);
 
 function persist() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch { /* private mode */ }
@@ -471,12 +487,18 @@ const el = {
   streak: document.getElementById("streak"),
   total: document.getElementById("total"),
   insights: document.getElementById("insights"),
+  calendar: document.getElementById("calendar"),
+  calLabel: document.getElementById("calLabel"),
+  calPrev: document.getElementById("calPrev"),
+  calNext: document.getElementById("calNext"),
+  calendarDetail: document.getElementById("calendarDetail"),
   moodNote: document.getElementById("moodNote"),
   saveNote: document.getElementById("saveNote"),
   shareCard: document.getElementById("shareCard"),
   exportData: document.getElementById("exportData"),
   importData: document.getElementById("importData"),
   importFile: document.getElementById("importFile"),
+  clearAll: document.getElementById("clearAll"),
   breatheBtn: document.getElementById("breatheBtn"),
   breatheOrb: document.getElementById("breatheOrb"),
   breathePhase: document.getElementById("breathePhase"),
@@ -794,6 +816,40 @@ function renderInsights() {
     `<div class="insight"><span class="insight__label">${t("stat.entries." + (days.length === 1 ? "one" : "many")).replace("{n}", days.length)}</span><strong>${days.length} / 7</strong></div>`;
 }
 
+function renderCalendar() {
+  const year = calendarMonth.getFullYear();
+  const month = calendarMonth.getMonth();
+  el.calLabel.textContent = new Intl.DateTimeFormat(state.lang, { month: "long", year: "numeric" }).format(calendarMonth);
+  const first = new Date(year, month, 1);
+  const startDay = (first.getDay() + 6) % 7; // Monday start
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const frag = document.createDocumentFragment();
+  const weekdays = [];
+  for (let i = 1; i <= 7; i++) { const d = new Date(2024, 0, i); weekdays.push(new Intl.DateTimeFormat(state.lang, { weekday: "narrow" }).format(d)); }
+  weekdays.forEach(w => { const h = document.createElement("div"); h.className = "cal__head"; h.textContent = w; frag.appendChild(h); });
+  for (let i = 0; i < startDay; i++) { const e = document.createElement("div"); e.className = "cal__cell cal__cell--empty"; frag.appendChild(e); }
+  const todayKey = dateKey(new Date());
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(year, month, day);
+    const key = dateKey(d);
+    const moodId = state.diary[key];
+    const mood = moodId ? MOODS[moodId] : null;
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "cal__cell" + (mood ? " cal__cell--mood" : "") + (key === todayKey ? " cal__cell--today" : "");
+    if (mood) cell.style.background = mood.gradient;
+    cell.textContent = mood ? mood.emoji : String(day);
+    cell.title = mood ? `${day} · ${t("mood." + moodId)}${state.notes[key] ? "\n" + state.notes[key] : ""}` : String(day);
+    cell.addEventListener("click", () => {
+      if (!mood) { el.calendarDetail.textContent = ""; return; }
+      el.calendarDetail.innerHTML = `<strong>${mood.emoji} ${t("mood." + moodId)}</strong> · ${d.toLocaleDateString(state.lang, { month: "short", day: "numeric" })}${state.notes[key] ? `<div class="calendar-detail__note">${escapeHtml(state.notes[key])}</div>` : ""}`;
+    });
+    frag.appendChild(cell);
+  }
+  el.calendar.replaceChildren(frag);
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
 /* ---------- Game ---------- */
 
 const QUESTS = [
@@ -934,6 +990,7 @@ function selectMood(moodId, options = {}) {
   renderGame();
   renderQuests();
   renderChart();
+  renderCalendar();
   renderParticles(moodId);
   showMessage(moodId);
   el.moodNote.value = state.notes[key] || "";
@@ -959,7 +1016,9 @@ function renderAuth() {
   el.loginBtn.setAttribute("aria-label", loggedIn ? t("logout") : t("login"));
 }
 
+let lastFocus = null;
 function openLogin() {
+  lastFocus = document.activeElement;
   if (state.user) {
     el.loginFirstName.value = state.user.firstName || "";
     el.loginLastName.value = state.user.lastName || "";
@@ -985,6 +1044,7 @@ function closeLogin() {
   el.loginModal.classList.remove("is-open");
   el.loginModal.hidden = true;
   el.loginForm.reset();
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 
 function handleLoginSubmit(event) {
@@ -1046,6 +1106,7 @@ function applyLanguage() {
   renderMoodButtons();
   renderQuests();
   renderChart();
+  renderCalendar();
   renderGame();
   showMessage(currentMood);
 }
@@ -1076,11 +1137,22 @@ el.lang.addEventListener("change", () => {
   applyLanguage();
 });
 
+el.calPrev.addEventListener("click", () => { calendarMonth.setMonth(calendarMonth.getMonth() - 1); renderCalendar(); });
+el.calNext.addEventListener("click", () => { calendarMonth.setMonth(calendarMonth.getMonth() + 1); renderCalendar(); });
+
 el.loginBtn.addEventListener("click", handleAuthClick);
 el.loginClose.addEventListener("click", closeLogin);
 el.loginForm.addEventListener("submit", handleLoginSubmit);
 el.loginModal.addEventListener("click", event => {
   if (event.target === el.loginModal) closeLogin();
+});
+el.loginModal.addEventListener("keydown", event => {
+  if (event.key !== "Tab") return;
+  const focusable = el.loginModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 });
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && !el.loginModal.hidden) closeLogin();
@@ -1133,13 +1205,22 @@ el.importFile.addEventListener("change", async () => {
   el.importFile.value = "";
 });
 
-el.shareCard.addEventListener("click", () => {
+el.clearAll.addEventListener("click", () => {
+  if (!confirm(t("confirmClearAll"))) return;
+  localStorage.removeItem(SAVE_KEY);
+  state = defaults();
+  currentMood = "calm";
+  persist();
+  applyLanguage();
+  selectMood("calm", { silent: true, noLog: true });
+  toast(t("toast.clearedAll"));
+});
+
+el.shareCard.addEventListener("click", async () => {
   const mood = MOODS[currentMood];
   const c = document.createElement("canvas"); c.width = 900; c.height = 500;
   const g = c.getContext("2d");
   const grad = g.createLinearGradient(0, 0, 0, 500);
-  const tmp = document.createElement("canvas").width; // noop
-  // parse gradient colors from mood.gradient
   const colors = mood.gradient.match(/#[0-9a-fA-F]{6}/g) || ["#4cc9f0", "#f72585"];
   grad.addColorStop(0, colors[0]); grad.addColorStop(1, colors[1] || colors[0]);
   g.fillStyle = grad; g.fillRect(0, 0, 900, 500);
@@ -1150,11 +1231,15 @@ el.shareCard.addEventListener("click", () => {
   g.font = "28px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.9)";
   g.fillText(t("forecast." + currentMood), 50, 220);
   g.font = "italic 26px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.95)";
-  const msg = el.message.textContent || "";
-  wrapText(g, msg, 50, 290, 800, 36);
+  wrapText(g, el.message.textContent || "", 50, 290, 800, 36);
   g.font = "22px Segoe UI, sans-serif"; g.fillStyle = "rgba(255,255,255,0.75)";
   g.fillText(new Date().toLocaleDateString(state.lang, { weekday: "long", month: "long", day: "numeric", year: "numeric" }), 50, 455);
-  const a = document.createElement("a"); a.download = `moodsky-${currentMood}.png`; a.href = c.toDataURL("image/png"); a.click();
+  const blob = await new Promise(r => c.toBlob(r, "image/png"));
+  const file = new File([blob], `moodsky-${currentMood}.png`, { type: "image/png" });
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: "MoodSky", text: t("forecast." + currentMood) }); toast(t("toast.shared")); return; } catch { /* fallback */ }
+  }
+  const a = document.createElement("a"); a.download = file.name; a.href = URL.createObjectURL(blob); a.click(); URL.revokeObjectURL(a.href);
   toast(t("toast.shared"));
 });
 function wrapText(g, text, x, y, max, lh) {
@@ -1178,6 +1263,7 @@ function stopBreathe() {
 }
 function startBreathe() {
   if (breatheTimer) { stopBreathe(); return; }
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   breatheLeft = 60;
   el.breatheBtn.textContent = t("breatheStop");
   el.breatheOrb.classList.add("is-active");
@@ -1188,9 +1274,9 @@ function startBreathe() {
     breatheLeft = Math.max(0, 60 - elapsed);
     el.breatheTimer.textContent = `${breatheLeft}s`;
     const phase = ((Date.now() - start) % cycle) / cycle;
-    if (phase < 1/3) setBreathePhase(t("breatheIn"), 1.25);
-    else if (phase < 2/3) setBreathePhase(t("breatheHold"), 1.25);
-    else setBreathePhase(t("breatheOut"), 0.9);
+    if (phase < 1/3) setBreathePhase(t("breatheIn"), reduce ? 1 : 1.25);
+    else if (phase < 2/3) setBreathePhase(t("breatheHold"), reduce ? 1 : 1.25);
+    else setBreathePhase(t("breatheOut"), reduce ? 1 : 0.9);
     if (breatheLeft <= 0) stopBreathe();
   };
   tick();

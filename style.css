@@ -406,7 +406,21 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 .insight__label { display: block; font-size: .7rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
 .insight strong { font-size: .95rem; }
 .diary-actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
+.link-btn--danger:hover { color: #ff8a8a; }
 .chart__note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: -4px; }
+.calendar-head { display:flex; justify-content:space-between; gap:12px; align-items:end; margin-top:24px; }
+.calendar-head h3 { margin:0; font-size:1.2rem; }
+.calendar-nav { display:flex; align-items:center; gap:8px; }
+.calendar-nav strong { min-width:140px; text-align:center; font-size:.85rem; color:var(--muted); }
+.calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-top:14px; }
+.cal__head { font-size:.68rem; color:var(--muted); text-align:center; padding:4px 0; }
+.cal__cell { aspect-ratio:1; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); color:var(--ink); font:inherit; font-size:.78rem; cursor:pointer; }
+.cal__cell--empty { background:transparent; border-color:transparent; cursor:default; }
+.cal__cell--mood { border-color:rgba(255,255,255,.15); font-size:1rem; }
+.cal__cell--today { outline:2px solid var(--accent); outline-offset:1px; }
+.calendar-detail { min-height:24px; margin-top:12px; font-size:.86rem; color:var(--muted); }
+.calendar-detail strong { color:var(--ink); }
+.calendar-detail__note { margin-top:4px; font-size:.82rem; }
 /* ===== Breathe ===== */
 .breathe { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 10px 0 6px; }
 .breathe__orb {
@@ -492,4 +506,5 @@ select.field__input { background: #12141f; color: var(--ink); color-scheme: dark
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .breathe__orb { transition: none !important; }
 }
