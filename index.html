@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="MoodSky — a tiny emotional weather station game. Paint the sky, earn XP, unlock secret skies." />
+  <meta name="theme-color" content="#2c5364" />
   <title>MoodSky · How's your inner weather?</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="style.css?v=features1" />
 </head>
 <body data-mood="calm">
@@ -238,5 +241,6 @@
   </div>
 
   <script src="script.js?v=features1"></script>
+  <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});</script>
 </body>
 </html>

@@ -1,0 +1,13 @@
+﻿{
+  "name": "MoodSky",
+  "short_name": "MoodSky",
+  "description": "A tiny emotional weather station game.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2c5364",
+  "theme_color": "#2c5364",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
