@@ -8,7 +8,7 @@
   <title>MoodSky · How's your inner weather?</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="style.css?v=features3" />
+  <link rel="stylesheet" href="style.css?v=features4" />
 </head>
 <body data-mood="calm">
   <!-- The living sky (decorative) -->
@@ -44,7 +44,7 @@
           <option value="fr">Français</option>
           <option value="ar">العربية</option>
         </select>
-        <button id="loginBtn" class="btn btn--small" type="button" data-i18n="login">Log in</button>
+        <button id="loginBtn" class="btn btn--small" type="button" data-i18n="login">Profile</button>
         <div class="clock">
           <strong id="clock">--:--:--</strong>
           <span id="today"></span>
@@ -77,6 +77,7 @@
           <button id="shareCard" class="btn" type="button">⤴ <span data-i18n="share">Share card</span></button>
           <span class="hint" data-i18n="hint">Tip: press 1–8 on your keyboard</span>
         </div>
+        <div id="onboarding" class="onboarding" hidden></div>
         <div class="note-wrap">
           <div class="field">
             <span data-i18n="tagsLabel">What shaped this mood?</span>
@@ -144,6 +145,7 @@
           <div class="notes-list-head"><h3 data-i18n="notesListTitle">Notes & entries</h3><input id="notesSearch" class="field__input notes-search" type="search" data-i18n-placeholder="notesSearch" placeholder="Search notes..." /></div>
           <div id="notesList" class="notes-list"></div>
         </div>
+        <p class="privacy-note" data-i18n="privacyNote">All data stays in your browser. Export a backup anytime.</p>
         <div class="diary-actions">
           <button id="exportData" class="link-btn" type="button" data-i18n="exportData">Export data</button>
           <button id="importData" class="link-btn" type="button" data-i18n="importData">Import data</button>
@@ -189,94 +191,48 @@
   </div>
 
   <div id="loginModal" class="modal" hidden>
-    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal__panel modal__panel--small" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
       <div class="modal__head">
         <div>
-          <h2 id="loginTitle" data-i18n="loginTitle">Log in to MoodSky</h2>
-          <p class="modal__sub" data-i18n="loginSubtitle">Save your name on this device.</p>
+          <h2 id="loginTitle" data-i18n="loginTitle">Your local profile</h2>
+          <p class="modal__sub" data-i18n="loginSubtitle">Optional. Saved only on this device — no account, no cloud.</p>
         </div>
         <button id="loginClose" class="icon-btn" type="button" aria-label="Close">✕</button>
       </div>
       <form id="loginForm" class="modal__form">
-        <div class="form-grid">
-          <label class="field">
-            <span data-i18n="firstName">First name</span>
-            <input id="loginFirstName" class="field__input" type="text" autocomplete="given-name" required />
-          </label>
-          <label class="field">
-            <span data-i18n="lastName">Last name</span>
-            <input id="loginLastName" class="field__input" type="text" autocomplete="family-name" required />
-          </label>
-        </div>
+        <label class="field">
+          <span data-i18n="firstName">First name</span>
+          <input id="loginFirstName" class="field__input" type="text" autocomplete="given-name" />
+        </label>
         <label class="field">
           <span data-i18n="username">Username</span>
-          <input id="loginUsername" class="field__input" type="text" autocomplete="username" required />
+          <input id="loginUsername" class="field__input" type="text" autocomplete="username" />
         </label>
         <label class="field">
-          <span data-i18n="email">Email</span>
-          <input id="loginEmail" class="field__input" type="email" autocomplete="email" required />
+          <span data-i18n="email">Email (optional)</span>
+          <input id="loginEmail" class="field__input" type="email" autocomplete="email" />
         </label>
         <label class="field">
-          <span data-i18n="password">Password</span>
-          <input id="loginPassword" class="field__input" type="password" autocomplete="new-password" minlength="6" required />
+          <span data-i18n="favoriteMood">Favorite mood</span>
+          <select id="loginFavoriteMood" class="field__input">
+            <option value="" data-i18n="selectOption">Select...</option>
+            <option value="sunny" data-i18n="mood.sunny">Happy</option>
+            <option value="rainy" data-i18n="mood.rainy">Rainy</option>
+            <option value="stormy" data-i18n="mood.stormy">Stormy</option>
+            <option value="calm" data-i18n="mood.calm">Calm</option>
+            <option value="electric" data-i18n="mood.electric">Electric</option>
+          </select>
         </label>
-        <div class="form-grid">
-          <label class="field">
-            <span data-i18n="phone">Phone</span>
-            <input id="loginPhone" class="field__input" type="tel" autocomplete="tel" />
-          </label>
-          <label class="field">
-            <span data-i18n="birthdate">Birth date</span>
-            <input id="loginBirthdate" class="field__input" type="date" />
-          </label>
-        </div>
-        <div class="form-grid">
-          <label class="field">
-            <span data-i18n="gender">Gender</span>
-            <select id="loginGender" class="field__input">
-              <option value="" data-i18n="selectOption">Select...</option>
-              <option value="female" data-i18n="genderFemale">Female</option>
-              <option value="male" data-i18n="genderMale">Male</option>
-              <option value="nonbinary" data-i18n="genderNonbinary">Non-binary</option>
-              <option value="prefer-not" data-i18n="genderPreferNot">Prefer not to say</option>
-            </select>
-          </label>
-          <label class="field">
-            <span data-i18n="favoriteMood">Favorite mood</span>
-            <select id="loginFavoriteMood" class="field__input">
-              <option value="" data-i18n="selectOption">Select...</option>
-              <option value="sunny" data-i18n="mood.sunny">Happy</option>
-              <option value="rainy" data-i18n="mood.rainy">Rainy</option>
-              <option value="stormy" data-i18n="mood.stormy">Stormy</option>
-              <option value="calm" data-i18n="mood.calm">Calm</option>
-              <option value="electric" data-i18n="mood.electric">Electric</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-grid">
-          <label class="field">
-            <span data-i18n="country">Country</span>
-            <input id="loginCountry" class="field__input" type="text" autocomplete="country-name" />
-          </label>
-          <label class="field">
-            <span data-i18n="city">City</span>
-            <input id="loginCity" class="field__input" type="text" autocomplete="address-level2" />
-          </label>
-        </div>
         <label class="field">
           <span data-i18n="bio">About you</span>
-          <textarea id="loginBio" class="field__input field__input--area" rows="3" data-i18n-placeholder="bioPlaceholder" placeholder="Tell us a little about yourself..."></textarea>
+          <textarea id="loginBio" class="field__input field__input--area" rows="3" data-i18n-placeholder="bioPlaceholder" placeholder="Tell us a little about yourself... (optional)"></textarea>
         </label>
-        <label class="field field--check">
-          <input id="loginTerms" type="checkbox" required />
-          <span data-i18n="terms">I agree to save this info on this device</span>
-        </label>
-        <button class="btn" type="submit" data-i18n="loginSubmit">Log in</button>
+        <button class="btn" type="submit" data-i18n="loginSubmit">Save profile</button>
       </form>
     </div>
   </div>
 
-  <script src="script.js?v=features3"></script>
+  <script src="script.js?v=features4"></script>
   <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});</script>
 </body>
 </html>

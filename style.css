@@ -400,6 +400,10 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 .stats { display: flex; gap: 8px; flex-wrap: wrap; }
 .stats span { padding: 7px 12px; border-radius: 999px; font-size: .73rem; background: rgba(255, 255, 255, .1); color: var(--muted); }
 .note-wrap { margin-top: 20px; display: grid; gap: 10px; }
+.onboarding { margin-top:16px; padding:16px; border-radius:16px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.07); }
+.onboarding strong { display:block; margin-bottom:4px; }
+.onboarding p { margin:0 0 10px; color:var(--muted); font-size:.88rem; }
+.privacy-note { margin-top:18px; font-size:.75rem; color:var(--muted); }
 .note-wrap .field__input--area { min-height: 64px; }
 .insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
 .insight { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
@@ -418,7 +422,9 @@ body[data-mood="nebula"] .nebula-field { opacity: 1; }
 .cal__cell--empty { background:transparent; border-color:transparent; cursor:default; }
 .cal__cell--mood { border-color:rgba(255,255,255,.15); font-size:1rem; }
 .cal__cell--today { outline:2px solid var(--accent); outline-offset:1px; }
+.cal__cell--editing { box-shadow: inset 0 0 0 2px #fff; }
 .calendar-detail { min-height:24px; margin-top:12px; font-size:.86rem; color:var(--muted); }
+.cal-edit { margin-top:0; font-size:.76rem; }
 .calendar-detail strong { color:var(--ink); }
 .calendar-detail__note { margin-top:4px; font-size:.82rem; }
 .tag-picker { display:flex; flex-wrap:wrap; gap:8px; }
@@ -502,6 +508,7 @@ footer { text-align: center; padding: 10px 0 0; font-size: .74rem; color: var(--
   background: color-mix(in srgb, var(--card-strong) 88%, #1a1f35);
   box-shadow: var(--shadow);
 }
+.modal__panel--small { width: min(520px, 100%); }
 .modal__head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
 .modal__head h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.02em; }
 .modal__sub { margin: 6px 0 0; color: var(--muted); font-size: .88rem; }

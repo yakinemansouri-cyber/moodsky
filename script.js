@@ -23,6 +23,12 @@ const STRINGS = {
     notePlaceholder: "Why do you feel this way? (optional)",
     saveNote: "Save note",
     "toast.noteSaved": "Note saved",
+    editingDay: "Editing {date}",
+    cancelEdit: "Cancel edit",
+    privacyNote: "All data stays in your browser. Export a backup anytime.",
+    onboardingTitle: "Welcome to MoodSky",
+    onboardingBody: "Pick a mood, add notes/tags, unlock secret skies, and keep everything local on this device.",
+    onboardingDismiss: "Got it",
     insightsKicker: "THIS WEEK",
     insightsTitle: "Your insights",
     topMood: "Most common",
@@ -59,33 +65,20 @@ const STRINGS = {
     soundOnLabel: "Turn sound on",
     volume: "Volume",
     "toast.soundOff": "Sound is off — tap 🔊 to turn it on",
-    login: "Log in",
-    logout: "Log out",
-    loginTitle: "Log in to MoodSky",
-    loginSubtitle: "Save your profile on this device.",
+    login: "Profile",
+    logout: "Clear profile",
+    loginTitle: "Your local profile",
+    loginSubtitle: "Optional. Saved only on this device — no account, no cloud.",
     firstName: "First name",
-    lastName: "Last name",
     username: "Username",
-    email: "Email",
-    password: "Password",
-    phone: "Phone",
-    birthdate: "Birth date",
-    gender: "Gender",
+    email: "Email (optional)",
     favoriteMood: "Favorite mood",
-    country: "Country",
-    city: "City",
     bio: "About you",
-    bioPlaceholder: "Tell us a little about yourself...",
-    terms: "I agree to save this info on this device",
-    selectOption: "Select...",
-    genderFemale: "Female",
-    genderMale: "Male",
-    genderNonbinary: "Non-binary",
-    genderPreferNot: "Prefer not to say",
-    loginSubmit: "Create profile",
+    bioPlaceholder: "Tell us a little about yourself... (optional)",
+    loginSubmit: "Save profile",
     loginClose: "Close",
-    "toast.loggedIn": "Welcome, {name}!",
-    "toast.loggedOut": "Logged out",
+    "toast.loggedIn": "Profile saved, {name}!",
+    "toast.loggedOut": "Profile cleared",
     langLabel: "Language",
     moodLabel: "Choose your mood",
     secretLabel: "Secret skies",
@@ -141,6 +134,12 @@ const STRINGS = {
     notePlaceholder: "Pourquoi te sens-tu comme ça ? (optionnel)",
     saveNote: "Enregistrer la note",
     "toast.noteSaved": "Note enregistrée",
+    editingDay: "Modification du {date}",
+    cancelEdit: "Annuler",
+    privacyNote: "Toutes les données restent dans ton navigateur. Exporte une sauvegarde quand tu veux.",
+    onboardingTitle: "Bienvenue sur MoodSky",
+    onboardingBody: "Choisis une humeur, ajoute des notes/tags, débloque des ciels secrets, tout reste local sur cet appareil.",
+    onboardingDismiss: "Compris",
     insightsKicker: "CETTE SEMAINE",
     insightsTitle: "Tes aperçus",
     topMood: "Humeur fréquente",
@@ -177,33 +176,20 @@ const STRINGS = {
     soundOnLabel: "Activer le son",
     volume: "Volume",
     "toast.soundOff": "Son coupé — appuie sur 🔊 pour l'activer",
-    login: "Connexion",
-    logout: "Déconnexion",
-    loginTitle: "Connexion à MoodSky",
-    loginSubtitle: "Enregistre ton profil sur cet appareil.",
+    login: "Profil",
+    logout: "Effacer le profil",
+    loginTitle: "Ton profil local",
+    loginSubtitle: "Optionnel. Enregistré uniquement sur cet appareil — pas de compte, pas de cloud.",
     firstName: "Prénom",
-    lastName: "Nom",
     username: "Nom d'utilisateur",
-    email: "E-mail",
-    password: "Mot de passe",
-    phone: "Téléphone",
-    birthdate: "Date de naissance",
-    gender: "Genre",
+    email: "E-mail (optionnel)",
     favoriteMood: "Humeur préférée",
-    country: "Pays",
-    city: "Ville",
     bio: "À propos de toi",
-    bioPlaceholder: "Dis-nous un peu plus sur toi...",
-    terms: "J'accepte d'enregistrer ces informations sur cet appareil",
-    selectOption: "Sélectionner...",
-    genderFemale: "Femme",
-    genderMale: "Homme",
-    genderNonbinary: "Non binaire",
-    genderPreferNot: "Je préfère ne pas dire",
-    loginSubmit: "Créer le profil",
+    bioPlaceholder: "Dis-nous un peu plus sur toi... (optionnel)",
+    loginSubmit: "Enregistrer le profil",
     loginClose: "Fermer",
-    "toast.loggedIn": "Bienvenue, {name} !",
-    "toast.loggedOut": "Déconnecté",
+    "toast.loggedIn": "Profil enregistré, {name} !",
+    "toast.loggedOut": "Profil effacé",
     langLabel: "Langue",
     moodLabel: "Choisis ton humeur",
     secretLabel: "Ciels secrets",
@@ -259,6 +245,12 @@ const STRINGS = {
     notePlaceholder: "لماذا تشعر بهذا؟ (اختياري)",
     saveNote: "حفظ الملاحظة",
     "toast.noteSaved": "تم حفظ الملاحظة",
+    editingDay: "تعديل {date}",
+    cancelEdit: "إلغاء التعديل",
+    privacyNote: "كل البيانات تبقى في متصفحك. يمكنك تصدير نسخة احتياطية في أي وقت.",
+    onboardingTitle: "مرحباً بك في MoodSky",
+    onboardingBody: "اختر مزاجاً، أضف ملاحظات/وسومًا، وافتح سماوات سرية، وكل شيء يبقى محلياً على هذا الجهاز.",
+    onboardingDismiss: "حسناً",
     insightsKicker: "هذا الأسبوع",
     insightsTitle: "لمحاتك",
     topMood: "الأكثر شيوعاً",
@@ -295,33 +287,20 @@ const STRINGS = {
     soundOnLabel: "تشغيل الصوت",
     volume: "مستوى الصوت",
     "toast.soundOff": "الصوت مغلق — اضغط 🔊 لتشغيله",
-    login: "تسجيل الدخول",
-    logout: "تسجيل الخروج",
-    loginTitle: "تسجيل الدخول إلى MoodSky",
-    loginSubtitle: "احفظ ملفك الشخصي على هذا الجهاز.",
+    login: "الملف الشخصي",
+    logout: "مسح الملف الشخصي",
+    loginTitle: "ملفك الشخصي المحلي",
+    loginSubtitle: "اختياري. يُحفظ فقط على هذا الجهاز — بلا حساب، بلا سحابة.",
     firstName: "الاسم الأول",
-    lastName: "اسم العائلة",
     username: "اسم المستخدم",
-    email: "البريد الإلكتروني",
-    password: "كلمة المرور",
-    phone: "الهاتف",
-    birthdate: "تاريخ الميلاد",
-    gender: "الجنس",
+    email: "البريد الإلكتروني (اختياري)",
     favoriteMood: "المزاج المفضل",
-    country: "البلد",
-    city: "المدينة",
     bio: "نبذة عنك",
-    bioPlaceholder: "أخبرنا قليلاً عن نفسك...",
-    terms: "أوافق على حفظ هذه المعلومات على هذا الجهاز",
-    selectOption: "اختر...",
-    genderFemale: "أنثى",
-    genderMale: "ذكر",
-    genderNonbinary: "غير ثنائي",
-    genderPreferNot: "أفضل عدم القول",
-    loginSubmit: "إنشاء الملف الشخصي",
+    bioPlaceholder: "أخبرنا قليلاً عن نفسك... (اختياري)",
+    loginSubmit: "حفظ الملف الشخصي",
     loginClose: "إغلاق",
-    "toast.loggedIn": "مرحباً، {name}!",
-    "toast.loggedOut": "تم تسجيل الخروج",
+    "toast.loggedIn": "تم حفظ الملف الشخصي، {name}!",
+    "toast.loggedOut": "تم مسح الملف الشخصي",
     langLabel: "اللغة",
     moodLabel: "اختر حالتك",
     secretLabel: "سماء سرية",
@@ -488,6 +467,7 @@ function loadState() {
 let state = loadState();
 let currentMood = MOODS[state.lastMood] ? state.lastMood : "calm";
 let calendarMonth = new Date(); calendarMonth.setDate(1);
+let editingKey = dateKey(new Date());
 
 function persist() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch { /* private mode */ }
@@ -529,6 +509,8 @@ const el = {
   badges: document.getElementById("badges"),
   notesSearch: document.getElementById("notesSearch"),
   notesList: document.getElementById("notesList"),
+  onboarding: document.getElementById("onboarding"),
+  noteWrap: document.querySelector(".note-wrap"),
   moodNote: document.getElementById("moodNote"),
   saveNote: document.getElementById("saveNote"),
   shareCard: document.getElementById("shareCard"),
@@ -562,18 +544,10 @@ const el = {
   loginModal: document.getElementById("loginModal"),
   loginForm: document.getElementById("loginForm"),
   loginFirstName: document.getElementById("loginFirstName"),
-  loginLastName: document.getElementById("loginLastName"),
   loginUsername: document.getElementById("loginUsername"),
   loginEmail: document.getElementById("loginEmail"),
-  loginPassword: document.getElementById("loginPassword"),
-  loginPhone: document.getElementById("loginPhone"),
-  loginBirthdate: document.getElementById("loginBirthdate"),
-  loginGender: document.getElementById("loginGender"),
   loginFavoriteMood: document.getElementById("loginFavoriteMood"),
-  loginCountry: document.getElementById("loginCountry"),
-  loginCity: document.getElementById("loginCity"),
   loginBio: document.getElementById("loginBio"),
-  loginTerms: document.getElementById("loginTerms"),
   loginClose: document.getElementById("loginClose"),
   surprise: document.getElementById("surprise"),
   newMessage: document.getElementById("newMessage"),
@@ -894,20 +868,40 @@ function renderCalendar() {
     const mood = moodId ? MOODS[moodId] : null;
     const cell = document.createElement("button");
     cell.type = "button";
-    cell.className = "cal__cell" + (mood ? " cal__cell--mood" : "") + (key === todayKey ? " cal__cell--today" : "");
+    cell.className = "cal__cell" + (mood ? " cal__cell--mood" : "") + (key === todayKey ? " cal__cell--today" : "") + (key === editingKey ? " cal__cell--editing" : "");
     if (mood) cell.style.background = mood.gradient;
     cell.textContent = mood ? mood.emoji : String(day);
     const tags = (state.tags[key] || []).map(tag => t("tag"+tag.charAt(0).toUpperCase()+tag.slice(1))).join(", ");
     cell.title = mood ? `${day} · ${t("mood." + moodId)}${tags ? "\n"+tags : ""}${state.notes[key] ? "\n" + state.notes[key] : ""}` : String(day);
     cell.addEventListener("click", () => {
       if (!mood) { el.calendarDetail.textContent = ""; return; }
-      el.calendarDetail.innerHTML = `<strong>${mood.emoji} ${t("mood." + moodId)}</strong> · ${d.toLocaleDateString(state.lang, { month: "short", day: "numeric" })}${tags ? `<div class="calendar-detail__note">${escapeHtml(tags)}</div>` : ""}${state.notes[key] ? `<div class="calendar-detail__note">${escapeHtml(state.notes[key])}</div>` : ""}`;
+      editingKey = key;
+      syncEditUI();
+      renderCalendar();
+      el.calendarDetail.innerHTML = `<strong>${mood.emoji} ${t("mood." + moodId)}</strong> · ${d.toLocaleDateString(state.lang, { month: "short", day: "numeric" })}${tags ? `<div class="calendar-detail__note">${escapeHtml(tags)}</div>` : ""}${state.notes[key] ? `<div class="calendar-detail__note">${escapeHtml(state.notes[key])}</div>` : ""}<div class="calendar-detail__note"><button type="button" class="link-btn cal-edit" data-edit="${key}">${t("noteLabel")}</button></div>`;
+      const editBtn = el.calendarDetail.querySelector("[data-edit]");
+      if (editBtn) editBtn.addEventListener("click", () => { editingKey = key; syncEditUI(); renderCalendar(); el.moodNote.focus(); });
     });
     frag.appendChild(cell);
   }
   el.calendar.replaceChildren(frag);
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+function syncEditUI() {
+  const today = dateKey(new Date());
+  if (!editingKey || !state.diary[editingKey]) editingKey = today;
+  const isToday = editingKey === today;
+  const label = el.noteWrap?.querySelector('[data-i18n="noteLabel"]') || el.noteWrap?.querySelector("span");
+  if (label) label.textContent = isToday ? t("noteLabel") : fmt("editingDay", { date: new Date(editingKey + "T00:00:00").toLocaleDateString(state.lang, { month: "short", day: "numeric" }) });
+  el.moodNote.value = state.notes[editingKey] || "";
+  renderTagPicker();
+  let cancel = document.getElementById("cancelEdit");
+  if (!isToday) {
+    if (!cancel) { cancel = document.createElement("button"); cancel.id="cancelEdit"; cancel.type="button"; cancel.className="link-btn"; el.saveNote.insertAdjacentElement("afterend", cancel); cancel.addEventListener("click", () => { editingKey = today; syncEditUI(); renderCalendar(); el.calendarDetail.textContent=""; }); }
+    cancel.textContent = t("cancelEdit");
+  } else if (cancel) cancel.remove();
+}
 
 /* ---------- Game ---------- */
 
@@ -1053,8 +1047,7 @@ function selectMood(moodId, options = {}) {
   renderNotesList();
   renderParticles(moodId);
   showMessage(moodId);
-  el.moodNote.value = state.notes[key] || "";
-  renderTagPicker();
+  syncEditUI();
 
   if (!options.silent) {
     Sound.play("click");
@@ -1082,18 +1075,10 @@ function openLogin() {
   lastFocus = document.activeElement;
   if (state.user) {
     el.loginFirstName.value = state.user.firstName || "";
-    el.loginLastName.value = state.user.lastName || "";
     el.loginUsername.value = state.user.username || "";
     el.loginEmail.value = state.user.email || "";
-    el.loginPassword.value = "";
-    el.loginPhone.value = state.user.phone || "";
-    el.loginBirthdate.value = state.user.birthdate || "";
-    el.loginGender.value = state.user.gender || "";
     el.loginFavoriteMood.value = state.user.favoriteMood || "";
-    el.loginCountry.value = state.user.country || "";
-    el.loginCity.value = state.user.city || "";
     el.loginBio.value = state.user.bio || "";
-    el.loginTerms.checked = !!state.user.terms;
   }
   el.loginModal.hidden = false;
   el.loginModal.classList.add("is-open");
@@ -1112,19 +1097,12 @@ function handleLoginSubmit(event) {
   event.preventDefault();
   const user = {
     firstName: el.loginFirstName.value.trim(),
-    lastName: el.loginLastName.value.trim(),
     username: el.loginUsername.value.trim(),
     email: el.loginEmail.value.trim(),
-    phone: el.loginPhone.value.trim(),
-    birthdate: el.loginBirthdate.value,
-    gender: el.loginGender.value,
     favoriteMood: el.loginFavoriteMood.value,
-    country: el.loginCountry.value.trim(),
-    city: el.loginCity.value.trim(),
-    bio: el.loginBio.value.trim(),
-    terms: el.loginTerms.checked
+    bio: el.loginBio.value.trim()
   };
-  if (!user.firstName || !user.lastName || !user.username || !user.email || !el.loginPassword.value || !user.terms) return;
+  if (!user.firstName && !user.username) return;
   state.user = user;
   persist();
   closeLogin();
@@ -1171,6 +1149,7 @@ function applyLanguage() {
   renderNotesList();
   renderGame();
   showMessage(currentMood);
+  renderOnboarding();
 }
 
 /* ---------- Events ---------- */
@@ -1232,13 +1211,14 @@ el.newMessage.addEventListener("click", () => {
 });
 
 el.saveNote.addEventListener("click", () => {
-  const key = dateKey(new Date());
+  const key = editingKey;
   const val = el.moodNote.value.trim();
   if (val) state.notes[key] = val; else delete state.notes[key];
   persist();
   renderChart(); renderCalendar(); renderNotesList(); renderBadges();
   toast(t("toast.noteSaved"));
   Sound.play("click");
+  if (editingKey !== dateKey(new Date())) { editingKey = dateKey(new Date()); syncEditUI(); renderCalendar(); }
 });
 el.notesSearch.addEventListener("input", renderNotesList);
 el.settingsBtn.addEventListener("click", openSettings);
@@ -1250,6 +1230,7 @@ el.settingReminder.addEventListener("change", async () => {
   if (state.settings.reminderEnabled && "Notification" in window && Notification.permission === "default") await Notification.requestPermission();
   persist();
 });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !el.settingsModal.hidden) closeSettings(); });
 el.settingReminderTime.addEventListener("change", () => { state.settings.reminderTime = el.settingReminderTime.value || "20:00"; persist(); });
 
 el.exportData.addEventListener("click", () => {
@@ -1323,7 +1304,7 @@ function wrapText(g, text, x, y, max, lh) {
 
 /* ---------- Tags / Notes list / Settings / Recap ---------- */
 function renderTagPicker() {
-  const key = dateKey(new Date());
+  const key = editingKey;
   const selected = state.tags[key] || [];
   const frag = document.createDocumentFragment();
   TAGS.forEach(tag => {
@@ -1408,6 +1389,14 @@ el.recapBtn.addEventListener("click", async () => {
   toast(t("toast.recap"));
 });
 
+function renderOnboarding() {
+  const seen = localStorage.getItem("moodsky.onboarded");
+  if (seen || Object.keys(state.diary).length) { el.onboarding.hidden = true; return; }
+  el.onboarding.hidden = false;
+  el.onboarding.innerHTML = `<strong>${t("onboardingTitle")}</strong><p>${t("onboardingBody")}</p><button type="button" class="btn btn--small" id="onboardingDismiss">${t("onboardingDismiss")}</button>`;
+  el.onboarding.querySelector("#onboardingDismiss").addEventListener("click", () => { localStorage.setItem("moodsky.onboarded","1"); el.onboarding.hidden = true; });
+}
+
 /* ---------- Breathe ---------- */
 let breatheTimer = null, breatheLeft = 60;
 function setBreathePhase(text, scale) {
@@ -1483,6 +1472,6 @@ tickClock();
 setInterval(tickClock, 1000);
 setInterval(checkReminder, 30000);
 selectMood(MOODS[savedMood()] ? savedMood() : "calm", { silent: true, noLog: true });
-renderTagPicker(); renderNotesList(); checkReminder();
+renderTagPicker(); renderNotesList(); renderOnboarding(); checkReminder();
 
 function savedMood() { return state.diary[dateKey(new Date())] || state.lastMood; }
