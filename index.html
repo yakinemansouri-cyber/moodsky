@@ -8,7 +8,7 @@
   <title>MoodSky · How's your inner weather?</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="style.css?v=features4" />
+  <link rel="stylesheet" href="style.css?v=features5" />
 </head>
 <body data-mood="calm">
   <!-- The living sky (decorative) -->
@@ -146,6 +146,17 @@
           <div id="notesList" class="notes-list"></div>
         </div>
         <p class="privacy-note" data-i18n="privacyNote">All data stays in your browser. Export a backup anytime.</p>
+        <div class="constellation-wrap">
+          <div class="panel__head constellation-head">
+            <div>
+              <p class="panel__kicker" data-i18n="constellationKicker">YOUR SKY</p>
+              <h3 data-i18n="constellationTitle">Mood constellation</h3>
+            </div>
+            <button id="shareConstellation" class="btn btn--small" type="button" data-i18n="shareConstellation">Share constellation</button>
+          </div>
+          <div id="constellation" class="constellation"></div>
+          <div id="constellationDetail" class="calendar-detail" aria-live="polite"></div>
+        </div>
         <div class="diary-actions">
           <button id="exportData" class="link-btn" type="button" data-i18n="exportData">Export data</button>
           <button id="importData" class="link-btn" type="button" data-i18n="importData">Import data</button>
@@ -232,7 +243,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=features4"></script>
+  <script src="script.js?v=features5"></script>
   <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});</script>
 </body>
 </html>

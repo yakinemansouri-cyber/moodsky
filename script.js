@@ -53,6 +53,11 @@ const STRINGS = {
     breatheReady: "A gentle 60-second reset",
     calendarKicker: "MONTH VIEW",
     calendarTitle: "Mood calendar",
+    constellationKicker: "YOUR SKY",
+    constellationTitle: "Mood constellation",
+    constellationEmpty: "Log moods to grow your constellation.",
+    shareConstellation: "Share constellation",
+    "toast.constellation": "Constellation downloaded",
     tagsLabel: "What shaped this mood?",
     tagWork: "Work", tagSleep: "Sleep", tagSocial: "Social", tagHealth: "Health", tagFamily: "Family", tagNature: "Nature",
     settings: "Settings", settingsTitle: "Settings", motion: "Reduce motion", reminder: "Daily reminder", reminderTime: "Reminder time",
@@ -164,6 +169,11 @@ const STRINGS = {
     breatheReady: "Une douce pause de 60 secondes",
     calendarKicker: "VUE DU MOIS",
     calendarTitle: "Calendrier d'humeur",
+    constellationKicker: "TON CIEL",
+    constellationTitle: "Constellation d'humeur",
+    constellationEmpty: "Note tes humeurs pour faire grandir ta constellation.",
+    shareConstellation: "Partager la constellation",
+    "toast.constellation": "Constellation téléchargée",
     tagsLabel: "Qu'est-ce qui a influencé cette humeur ?",
     tagWork: "Travail", tagSleep: "Sommeil", tagSocial: "Social", tagHealth: "Santé", tagFamily: "Famille", tagNature: "Nature",
     settings: "Paramètres", settingsTitle: "Paramètres", motion: "Réduire les animations", reminder: "Rappel quotidien", reminderTime: "Heure du rappel",
@@ -275,6 +285,11 @@ const STRINGS = {
     breatheReady: "استراحة لطيفة لمدة 60 ثانية",
     calendarKicker: "عرض الشهر",
     calendarTitle: "تقويم المزاج",
+    constellationKicker: "سماؤك",
+    constellationTitle: "كوكبة المزاج",
+    constellationEmpty: "سجل حالاتك لتنمو كوكبتك.",
+    shareConstellation: "مشاركة الكوكبة",
+    "toast.constellation": "تم تنزيل الكوكبة",
     tagsLabel: "ما الذي شكّل هذا المزاج؟",
     tagWork: "عمل", tagSleep: "نوم", tagSocial: "اجتماعي", tagHealth: "صحة", tagFamily: "عائلة", tagNature: "طبيعة",
     settings: "الإعدادات", settingsTitle: "الإعدادات", motion: "تقليل الحركة", reminder: "تذكير يومي", reminderTime: "وقت التذكير",
@@ -505,6 +520,9 @@ const el = {
   calPrev: document.getElementById("calPrev"),
   calNext: document.getElementById("calNext"),
   calendarDetail: document.getElementById("calendarDetail"),
+  constellation: document.getElementById("constellation"),
+  constellationDetail: document.getElementById("constellationDetail"),
+  shareConstellation: document.getElementById("shareConstellation"),
   tagPicker: document.getElementById("tagPicker"),
   badges: document.getElementById("badges"),
   notesSearch: document.getElementById("notesSearch"),
@@ -888,6 +906,52 @@ function renderCalendar() {
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
+function constellationPoints() {
+  const keys = Object.keys(state.diary).sort().slice(-30);
+  const w = 900, h = 320, pad = 50;
+  return keys.map((key, i) => {
+    const moodId = state.diary[key];
+    const mood = MOODS[moodId]; if (!mood) return null;
+    const x = keys.length === 1 ? w / 2 : pad + (i / (keys.length - 1)) * (w - pad * 2);
+    const wave = Math.sin(i * 1.3) * 44 + Math.cos(i * 0.7) * 24;
+    const y = h - pad - ((mood.score - 1) / 4) * (h - pad * 2) + wave * 0.25;
+    return { key, moodId, mood, x: Math.max(pad, Math.min(w - pad, x)), y: Math.max(36, Math.min(h - 36, y)), note: state.notes[key] || "", tags: state.tags[key] || [] };
+  }).filter(Boolean);
+}
+
+function renderConstellation() {
+  const pts = constellationPoints();
+  if (!pts.length) { el.constellation.innerHTML = `<div class="constellation-empty">${t("constellationEmpty")}</div>`; el.constellationDetail.textContent = ""; return; }
+  const w = 900, h = 320;
+  const lines = pts.map((p, i) => i ? `<line x1="${pts[i-1].x}" y1="${pts[i-1].y}" x2="${p.x}" y2="${p.y}" />` : "").join("");
+  const stars = pts.map(p => `<g class="const-star" data-key="${p.key}" tabindex="0" role="button" aria-label="${p.key} ${t("mood."+p.moodId)}"><circle class="const-glow" cx="${p.x}" cy="${p.y}" r="${10 + p.mood.score * 2.4}" fill="${(p.mood.gradient.match(/#[0-9a-fA-F]{6}/g)||["#fff"])[0]}" opacity="0.28"/><circle class="const-core" cx="${p.x}" cy="${p.y}" r="${4 + p.mood.score}" fill="#fff"/><text x="${p.x}" y="${p.y - 16}" text-anchor="middle" font-size="18">${p.mood.emoji}</text></g>`).join("");
+  el.constellation.innerHTML = `<svg viewBox="0 0 ${w} ${h}" class="constellation-svg" aria-label="${t("constellationTitle")}"><defs><linearGradient id="constLine" x1="0" x2="1"><stop offset="0%" stop-color="rgba(165,216,255,.2)"/><stop offset="100%" stop-color="rgba(229,153,247,.55)"/></linearGradient></defs><g class="const-lines" stroke="url(#constLine)" stroke-width="2" fill="none">${lines}</g>${stars}</svg>`;
+  el.constellation.querySelectorAll(".const-star").forEach(node => {
+    const open = () => {
+      const p = pts.find(x => x.key === node.dataset.key); if (!p) return;
+      editingKey = p.key; syncEditUI(); renderCalendar();
+      const tags = p.tags.map(tag => t("tag"+tag.charAt(0).toUpperCase()+tag.slice(1))).join(", ");
+      el.constellationDetail.innerHTML = `<strong>${p.mood.emoji} ${t("mood."+p.moodId)}</strong> · ${new Date(p.key+"T00:00:00").toLocaleDateString(state.lang,{month:"short",day:"numeric"})}${tags?`<div class="calendar-detail__note">${escapeHtml(tags)}</div>`:""}${p.note?`<div class="calendar-detail__note">${escapeHtml(p.note)}</div>`:""}`;
+    };
+    node.addEventListener("click", open);
+    node.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+  });
+}
+
+async function shareConstellation() {
+  const pts = constellationPoints(); if (!pts.length) return;
+  const c = document.createElement("canvas"); c.width = 1000; c.height = 560; const g = c.getContext("2d");
+  const bg = g.createLinearGradient(0,0,0,560); bg.addColorStop(0,"#091124"); bg.addColorStop(1,"#1a1033"); g.fillStyle = bg; g.fillRect(0,0,1000,560);
+  for (let i=0;i<120;i++){ g.fillStyle=`rgba(255,255,255,${Math.random()*0.8})`; g.fillRect(Math.random()*1000,Math.random()*560,1.5,1.5); }
+  g.strokeStyle="rgba(180,210,255,.45)"; g.lineWidth=2; g.beginPath(); pts.forEach((p,i)=>{ const x=50+p.x/900*900, y=90+p.y/320*360; i?g.lineTo(x,y):g.moveTo(x,y); }); g.stroke();
+  pts.forEach(p=>{ const x=50+p.x/900*900, y=90+p.y/320*360; const col=(p.mood.gradient.match(/#[0-9a-fA-F]{6}/g)||["#fff"])[0]; g.fillStyle=col+"55"; g.beginPath(); g.arc(x,y,12+p.mood.score*2,0,Math.PI*2); g.fill(); g.fillStyle="#fff"; g.beginPath(); g.arc(x,y,4+p.mood.score,0,Math.PI*2); g.fill(); g.font="20px serif"; g.fillText(p.mood.emoji,x-10,y-18); });
+  g.fillStyle="#fff"; g.font="bold 40px Segoe UI,sans-serif"; g.fillText("MoodSky · "+t("constellationTitle"), 50, 58);
+  const blob = await new Promise(r=>c.toBlob(r,"image/png"));
+  const file = new File([blob],"moodsky-constellation.png",{type:"image/png"});
+  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) { try { await navigator.share({files:[file],title:"MoodSky"}); toast(t("toast.constellation")); return; } catch {} }
+  const a=document.createElement("a"); a.download=file.name; a.href=URL.createObjectURL(blob); a.click(); URL.revokeObjectURL(a.href); toast(t("toast.constellation"));
+}
+
 function syncEditUI() {
   const today = dateKey(new Date());
   if (!editingKey || !state.diary[editingKey]) editingKey = today;
@@ -1044,6 +1108,7 @@ function selectMood(moodId, options = {}) {
   renderQuests();
   renderChart();
   renderCalendar();
+  renderConstellation();
   renderNotesList();
   renderParticles(moodId);
   showMessage(moodId);
@@ -1146,6 +1211,7 @@ function applyLanguage() {
   renderQuests();
   renderChart();
   renderCalendar();
+  renderConstellation();
   renderNotesList();
   renderGame();
   showMessage(currentMood);
@@ -1215,10 +1281,10 @@ el.saveNote.addEventListener("click", () => {
   const val = el.moodNote.value.trim();
   if (val) state.notes[key] = val; else delete state.notes[key];
   persist();
-  renderChart(); renderCalendar(); renderNotesList(); renderBadges();
+  renderChart(); renderCalendar(); renderConstellation(); renderNotesList(); renderBadges();
   toast(t("toast.noteSaved"));
   Sound.play("click");
-  if (editingKey !== dateKey(new Date())) { editingKey = dateKey(new Date()); syncEditUI(); renderCalendar(); }
+  if (editingKey !== dateKey(new Date())) { editingKey = dateKey(new Date()); syncEditUI(); renderCalendar(); renderConstellation(); }
 });
 el.notesSearch.addEventListener("input", renderNotesList);
 el.settingsBtn.addEventListener("click", openSettings);
@@ -1367,6 +1433,7 @@ function checkReminder() {
   }
 }
 
+el.shareConstellation.addEventListener("click", shareConstellation);
 el.recapBtn.addEventListener("click", async () => {
   const days = [];
   for (let i = 6; i >= 0; i--) { const d=new Date(); d.setDate(d.getDate()-i); const k=dateKey(d); const id=state.diary[k]; if(id&&MOODS[id]) days.push({id,k}); }
